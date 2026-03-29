@@ -5,4 +5,4 @@
 #$(call inherit-product-if-exists, vendor/oplus/camera/opluscamera.mk)
 
 # Dolby 
-$(call inherit-product, vendor/oneplus/dolby/oplusdolby.mk)
+$(call inherit-product, vendor/sony/dolby/sonydolby.mk)
