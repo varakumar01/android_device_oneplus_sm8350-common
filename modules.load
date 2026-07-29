@@ -2,8 +2,6 @@ adsp_loader_dlkm.ko
 apr_dlkm.ko
 aw8697.ko
 bolero_cdc_dlkm.ko
-bt_fm_slim.ko
-btpower.ko
 camera.ko
 e4000.ko
 fc0011.ko
@@ -13,7 +11,6 @@ fc2580.ko
 hdmi_dlkm.ko
 hid-aksys.ko
 it913x.ko
-llcc_perfmon.ko
 m88rs6000t.ko
 machine_dlkm.ko
 max2165.ko
@@ -36,7 +33,6 @@ platform_dlkm.ko
 q6_dlkm.ko
 q6_notifier_dlkm.ko
 q6_pdr_dlkm.ko
-qcom_edac.ko
 qm1d1b0004.ko
 qm1d1c0042.ko
 qt1010.ko
@@ -49,7 +45,6 @@ rmnet_offload.ko
 rmnet_shs.ko
 rx_macro_dlkm.ko
 si2157.ko
-slimbus.ko
 slimbus-ngd.ko
 snd_event_dlkm.ko
 stub_dlkm.ko
