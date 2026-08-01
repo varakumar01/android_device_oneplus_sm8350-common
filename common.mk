@@ -167,6 +167,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/permissions/privapp-permissions-hotword.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-hotword.xml
 
+# launcher3 enrollment
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/permissions/privapp-permissions-launcher3-statsd.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-launcher3-statsd.xml
+
 # IPACM
 PRODUCT_PACKAGES += \
     ipacm \
