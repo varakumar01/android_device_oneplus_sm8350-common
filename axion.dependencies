@@ -1,0 +1,27 @@
+[
+  {
+    "repository": "varakumar01/Levion_kernel_OP9",
+    "target_path": "kernel/oneplus/sm8350",
+    "branch": "ksuN"
+  },
+  {
+    "repository": "varakumar01/android_hardware_oplus",
+    "target_path": "hardware/oplus",
+    "branch": "aox"
+  },
+  {
+    "repository": "LineageOS/android_hardware_pixelworks_interfaces",
+    "target_path": "hardware/pixelworks/interfaces",
+    "branch": "lineage-23.2"
+  },
+  {
+    "repository": "LineageOS/android_hardware_lineage_interfaces",
+    "target_path": "hardware/lineage/interfaces",
+    "branch": "lineage-23.2"
+  },
+  {
+    "repository": "varakumar01/android_device_oneplus_sm8350-common",
+    "target_path": "vendor/oneplus/sm8350-common",
+    "branch": "aox"
+  }
+]
