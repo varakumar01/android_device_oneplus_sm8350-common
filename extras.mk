@@ -9,3 +9,10 @@ $(call soong_config_set,libcameraservice,ext_lib,//$(LOCAL_PATH):libcameraservic
 
 # Dolby 
 $(call inherit-product, vendor/sony/dolby/sonydolby.mk)
+
+# powerhal properties
+PRODUCT_SYSTEM_PROPERTIES += \
+    pm.sleep_mode=1
+
+PRODUCT_VENDOR_PROPERTIES += \
+    vendor.post_boot.parsed=1
