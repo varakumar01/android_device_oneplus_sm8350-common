@@ -199,6 +199,19 @@ PRODUCT_PACKAGES += \
 
 $(call soong_config_set,libinit,vendor_init_lib,//$(LOCAL_PATH):libinit_oplus)
 
+# Axion Kernel Manager for lahaina (SD888).
+# device/axion/common's own platform/lahaina/ support was removed upstream
+# (a83fce46 "[ax_common] Remove support for lahaina (#15)" -- Yupik/Shima
+# (SD778G) also declare TARGET_BOARD_PLATFORM=lahaina and broke on the
+# SD888-tuned values), with guidance to own this config in the device tree
+# directly instead. Following AxionAOSP-devices/android_device_motorola_mumba@
+# cbcb512's pattern: ship it here, PRODUCT_COPY_FILES only, no dependency on
+# device/axion/common/platform/lahaina/ at all.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/kernel/ax_kernel_manager_lahaina.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/ax_kernel_manager.xml \
+    $(LOCAL_PATH)/configs/kernel/ax_perf_thermal_lahaina.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/ax_perf_thermal.xml \
+    $(LOCAL_PATH)/init/ax_init_lahaina.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ax_init_lahaina.rc
+
 # Kernel
 PRODUCT_ENABLE_UFFD_GC := true
 
