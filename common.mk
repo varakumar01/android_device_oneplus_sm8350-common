@@ -212,6 +212,14 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/kernel/ax_perf_thermal_lahaina.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/ax_perf_thermal.xml \
     $(LOCAL_PATH)/init/ax_init_lahaina.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ax_init_lahaina.rc
 
+# Axion cgroup setup (h-background/l-background/ax_foreground/systemui/
+# audio-app/restricted/dex2oat), also owned locally rather than depending on
+# device/axion/common -- shipped without the dead /dev/stune/* (schedtune)
+# stanzas, since this kernel has no CONFIG_SCHED_TUNE/CONFIG_CGROUP_SCHEDTUNE
+# at all. See ax_cgroups_lahaina.rc's own header for the full explanation.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/init/ax_cgroups_lahaina.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ax_cgroups_lahaina.rc
+
 # Kernel
 PRODUCT_ENABLE_UFFD_GC := true
 
