@@ -2,7 +2,7 @@
   {
     "repository": "varakumar01/Levion_kernel_OP9",
     "target_path": "kernel/oneplus/sm8350",
-    "branch": "ksuN"
+    "branch": "aox"
   },
   {
     "repository": "varakumar01/android_hardware_oplus",
@@ -20,8 +20,13 @@
     "branch": "lineage-23.2"
   },
   {
-    "repository": "varakumar01/android_device_oneplus_sm8350-common",
+    "repository": "varakumar01/proprietary_vendor_oneplus_sm8350-common",
     "target_path": "vendor/oneplus/sm8350-common",
+    "branch": "aox"
+  },
+  {
+    "repository": "varakumar01/proprietary_vendor_oneplus_lemonade",
+    "target_path": "vendor/oneplus/lemonade",
     "branch": "aox"
   }
 ]
