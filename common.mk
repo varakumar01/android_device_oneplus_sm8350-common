@@ -206,9 +206,15 @@ $(call soong_config_set,libinit,vendor_init_lib,//$(LOCAL_PATH):libinit_oplus)
 # directly instead. Following AxionAOSP-devices/android_device_motorola_mumba@
 # cbcb512's pattern: ship it here, PRODUCT_COPY_FILES only, no dependency on
 # device/axion/common/platform/lahaina/ at all.
+#
+# ax_perf_thermal_lahaina.xml deliberately NOT shipped: AxPerfConfig.java only
+# ever reads /vendor/etc or /system/etc, never system_ext (confirmed on-device,
+# "AxPerfConfig: missing thermal config"), so it was always inert here. Keep it
+# that way -- it's an always-on, foreground-app-aware writer of the same
+# scaling_{min,max}_freq nodes AxKernelManager and libperfmgr already share via
+# freq_qos, i.e. a third writer that would fight both.
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/kernel/ax_kernel_manager_lahaina.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/ax_kernel_manager.xml \
-    $(LOCAL_PATH)/configs/kernel/ax_perf_thermal_lahaina.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/ax_perf_thermal.xml \
     $(LOCAL_PATH)/init/ax_init_lahaina.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ax_init_lahaina.rc
 
 # Axion cgroup setup (h-background/l-background/ax_foreground/systemui/
