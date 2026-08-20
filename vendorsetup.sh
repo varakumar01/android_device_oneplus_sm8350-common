@@ -32,3 +32,4 @@ apply_patch() {
 }
 
 apply_patch "system/core" "../../$PATCH_DIR/system_core_drop_schedtune_actions.patch" "libprocessgroup: drop dead schedtune actions (no CONFIG_SCHED_TUNE on this kernel)"
+apply_patch "frameworks/base" "../../$PATCH_DIR/frameworks_base_udfps_ghbm_listener_public.patch" "SystemUI: make UdfpsSurfaceView.GhbmIlluminationListener public (needed cross-package by UdfpsTouchOverlay.kt)"

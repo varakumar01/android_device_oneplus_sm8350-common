@@ -1,0 +1,12 @@
+diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsSurfaceView.java b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsSurfaceView.java
+--- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsSurfaceView.java
++++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsSurfaceView.java
+@@ -41,7 +41,7 @@
+     /**
+      * Notifies {@link UdfpsView} when to enable GHBM illumination.
+      */
+-    interface GhbmIlluminationListener {
++    public interface GhbmIlluminationListener {
+         /**
+          * @param surface the surface for which GHBM should be enabled.
+          * @param onDisplayConfigured a runnable that should be run after GHBM is enabled.
