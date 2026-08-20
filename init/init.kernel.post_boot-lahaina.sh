@@ -172,7 +172,9 @@ echo 0-6 > /dev/cpuset/foreground/cpus
 echo 0 > /proc/sys/kernel/sched_boost
 
 # configure governor settings for silver cluster
-echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+# NOTE: scaling_governor and scaling_min_freq are owned by AxKernelManager
+# (ax_kernel_manager_lahaina.xml) -- this script used to stomp them ~7s after
+# AxKernelManager's boot-time restore, silently discarding any user-set value.
 echo 20000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 echo 500 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us
 if [ $rev == "1.0" ]; then
@@ -180,7 +182,6 @@ if [ $rev == "1.0" ]; then
 else
 	echo 1209600 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_freq
 fi
-echo 691200 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
 echo 1 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/pl
 
 # configure input boost settings
@@ -192,7 +193,9 @@ fi
 echo 120 > /sys/devices/system/cpu/cpu_boost/input_boost_ms
 
 # configure governor settings for gold cluster
-echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy4/scaling_governor
+# NOTE: scaling_governor is owned by AxKernelManager (see silver cluster note
+# above). schedutil/pl is owned by libperfmgr (powerhint.json Node #3,
+# ResetOnInit, default value 1 -- matches what this script used to write).
 echo 10000 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/down_rate_limit_us
 echo 500 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us
 if [ $rev == "1.0" ]; then
@@ -200,10 +203,9 @@ if [ $rev == "1.0" ]; then
 else
 	echo 1555200 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/hispeed_freq
 fi
-echo 1 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/pl
 
 # configure governor settings for gold+ cluster
-echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy7/scaling_governor
+# NOTE: scaling_governor is owned by AxKernelManager (see silver cluster note above).
 echo 5000 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/down_rate_limit_us
 echo 500 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/up_rate_limit_us
 if [ $rev == "1.0" ]; then
