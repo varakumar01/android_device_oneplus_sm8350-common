@@ -161,6 +161,27 @@
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
+    },
+    {
+      "Name": "devCpuctlTopAppCpuUclampMin",
+      "Path": "/dev/cpuctl/top-app/cpu.uclamp.min",
+      "Values": [
+        "0",
+        "20",
+        "35"
+      ],
+      "DefaultIndex": 0,
+      "ResetOnInit": true
+    },
+    {
+      "Name": "devCpuctlForegroundCpuUclampMin",
+      "Path": "/dev/cpuctl/foreground/cpu.uclamp.min",
+      "Values": [
+        "0",
+        "20"
+      ],
+      "DefaultIndex": 0,
+      "ResetOnInit": true
     }
   ],
   "Actions": [
@@ -187,6 +208,24 @@
       "Node": "sysClassDevfreq18590100QcomCpu0CpuL3LatMinFreq",
       "Value": "8000",
       "Duration": 0
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "devCpuctlTopAppCpuUclampMin",
+      "Value": "20",
+      "Duration": 0
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "devCpuctlTopAppCpuUclampMin",
+      "Value": "35",
+      "Duration": 2000
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "devCpuctlForegroundCpuUclampMin",
+      "Value": "20",
+      "Duration": 2000
     },
     {
       "PowerHint": "LAUNCH",
