@@ -48,9 +48,9 @@
         node="/sys/class/kgsl/kgsl-3d0/devfreq"
         currentNode="/sys/class/kgsl/kgsl-3d0/gpuclk"
         usageNode="/sys/class/kgsl/kgsl-3d0/gpu_busy_percentage"
-        minNode="/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
-        maxNode="/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
-        governorNode="/sys/class/kgsl/kgsl-3d0/pwrscale"
+        minNode="/sys/class/kgsl/kgsl-3d0/devfreq/min_freq"
+        maxNode="/sys/class/kgsl/kgsl-3d0/devfreq/max_freq"
+        governorNode="/sys/class/kgsl/kgsl-3d0/devfreq/governor"
         frequencyMultiplier="1"
         values="315000000,379000000,443000000,491000000,540000000,608000000,676000000,738000000,778000000,840000000" />
 </kernel-manager>
