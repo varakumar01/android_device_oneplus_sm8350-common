@@ -262,7 +262,3 @@ on zygote-start && property:persist.sys.ax_hbm_supp=true && property:persist.sys
 
 on property:persist.sys.boot_completed=* && property:persist.sys.ax_touch_boost=true && property:persist.sys.touchboost_enable=*
     setprop persist.vendor.touch_sensitivity_mode ${persist.sys.touchboost_enable}
-
-on property:sys.boot_completed=1 && property:persist.sys.ax_disable_pwrhal=true && property:vendor.powerhal.init=1
-    setprop vendor.powerhal.init 0
-    restart vendor.power-hal-aidl
