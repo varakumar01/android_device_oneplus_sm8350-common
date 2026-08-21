@@ -1,0 +1,33 @@
+diff --git a/src/com/axion/diagnostics/data/ThermalInfo.kt b/src/com/axion/diagnostics/data/ThermalInfo.kt
+--- a/src/com/axion/diagnostics/data/ThermalInfo.kt
++++ b/src/com/axion/diagnostics/data/ThermalInfo.kt
+@@ -46,6 +46,18 @@
+ 
+ object ThermalCollector {
+ 
++    // Sanity bounds for what a real device thermal zone can plausibly report. Some
++    // zones legitimately aren't temperatures at all even though they share the same
++    // sysfs "temp" attribute -- BCL/ibat zones report masked-IRQ state and battery
++    // current through it -- and the kernel's own THERMAL_TEMP_INVALID sentinel
++    // (-274000 millidegrees, include/linux/thermal.h) surfaces as a literal -274.0C
++    // for zones a board's DTS explicitly disables. Both are real, correctly-reported
++    // sysfs values, just not temperatures, so they're excluded here from
++    // maxTemperature/hottest -- which drive the health-summary "Thermal emergency"
++    // insight -- without hiding them from the full per-zone list below.
++    private const val PLAUSIBLE_MIN_C = -60f
++    private const val PLAUSIBLE_MAX_C = 150f
++
+     fun collect(): ThermalSnapshot {
+         val zones = mutableListOf<ThermalZone>()
+         var thermalDir = File("/sys/class/thermal/")
+@@ -90,7 +102,9 @@
+             coolingDevices.add(CoolingDevice(cdDir.name, type, curState, maxState))
+         }
+ 
+-        val maxTemp = zones.maxByOrNull { it.temperatureC }
++        val maxTemp = zones
++            .filter { it.temperatureC in PLAUSIBLE_MIN_C..PLAUSIBLE_MAX_C }
++            .maxByOrNull { it.temperatureC }
+         return ThermalSnapshot(
+             zones = zones,
+             coolingDevices = coolingDevices,
