@@ -37,7 +37,6 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 
 import android.util.ArrayMap;
 import java.util.Map;
-import org.lineageos.device.DeviceSettings.powertools.PowerProfileUtil;
 import org.lineageos.internal.util.FileUtils;
 
 public class DeviceSettings extends SettingsBasePreferenceFragment
@@ -203,23 +202,12 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
 
     private void enforceTouchPanelPolicy() {
         if (mGameModeSwitch == null || mEdgeTouchSwitch == null) return;
-        
-        int profile = SystemProperties.getInt("sys.perf_mode_active", PowerProfileUtil.MODE_BALANCE);
-        
-        if (profile == PowerProfileUtil.MODE_PERFORMANCE) {
-            mGameModeSwitch.setChecked(true);
-            mEdgeTouchSwitch.setChecked(true);
-            mGameModeSwitch.setEnabled(false);
-            mEdgeTouchSwitch.setEnabled(false);
-        } else if (profile == PowerProfileUtil.MODE_BATTERY_SAVER) {
-            mGameModeSwitch.setChecked(false);
-            mEdgeTouchSwitch.setChecked(false);
-            mGameModeSwitch.setEnabled(false);
-            mEdgeTouchSwitch.setEnabled(false);
-        } else {
-            mGameModeSwitch.setEnabled(true);
-            mEdgeTouchSwitch.setEnabled(true);
-        }
+
+        // PowerTools (and its sys.perf_mode_active writer) is not part of this
+        // build, so game mode / edge touch are always user-editable -- there is
+        // no power profile left that can lock them into a forced state.
+        mGameModeSwitch.setEnabled(true);
+        mEdgeTouchSwitch.setEnabled(true);
     }
 
     @Override

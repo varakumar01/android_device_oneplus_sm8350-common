@@ -45,7 +45,8 @@ public final class Startup extends BroadcastReceiver {
             try {
                 DeviceSettings.restoreFastChargeSetting(context);
                 DeviceSettings.restoreVibStrengthSetting(context);
-                org.lineageos.device.DeviceSettings.network.NetworkBandsFragment.restoreNrModeSettings(context);
+                // NetworkBandsFragment.restoreNrModeSettings(context) call added
+                // back once band lock (network/) lands in a separate commit.
             } catch (Exception e) {
                 Log.e(TAG, "Failed to restore hardware settings during startup", e);
             } finally {
