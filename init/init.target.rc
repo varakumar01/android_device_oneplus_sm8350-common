@@ -109,6 +109,14 @@ on property:ro.boot.hwlevel=*
 
 on boot
     write /dev/cpuset/audio-app/cpus 1-2
+    # DeviceSettings: aw8697 vibrator level and oplus_chg force_fast_charge
+    # are root:root 0644 by their own driver-declared mode -- system_app
+    # (DeviceSettings' domain) can never write either without this, no
+    # matter what sepolicy allows.
+    chown system system /sys/devices/platform/soc/88c000.i2c/i2c-6/6-005a/leds/vibrator/level
+    chmod 0664 /sys/devices/platform/soc/88c000.i2c/i2c-6/6-005a/leds/vibrator/level
+    chown system system /sys/module/oplus_chg/parameters/force_fast_charge
+    chmod 0664 /sys/module/oplus_chg/parameters/force_fast_charge
     chown system /sys/devices/platform/soc/990000.i2c/i2c-0/0-0049/trusted_touch_enable
     chmod 0660 /sys/devices/platform/soc/990000.i2c/i2c-0/0-0049/trusted_touch_enable
     chown system /sys/devices/platform/soc/990000.i2c/i2c-0/0-0038/trusted_touch_enable
