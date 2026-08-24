@@ -46,7 +46,6 @@
       "Name": "sysModuleMsmPerformanceParametersCpuMaxFreq",
       "Path": "/sys/module/msm_performance/parameters/cpu_max_freq",
       "Values": [
-        "0:1804800 1:1804800 2:1804800 3:1804800 4:2419200 5:2419200 6:2419200 7:2841600",
         "0:1804800 1:1804800 2:1804800 3:1804800 4:2419200 5:2419200 6:2419200 7:2841600"
       ],
       "DefaultIndex": 0,
