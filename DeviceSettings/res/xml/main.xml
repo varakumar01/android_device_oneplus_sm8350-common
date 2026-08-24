@@ -80,9 +80,23 @@
 
     <!-- Powertools intentionally omitted here -- excluded from this build entirely. -->
 
-    <!-- Network: Selective Band Lock -- ships in a separate commit, once
-         NetworkBandsActivity's source lands; the manifest doesn't declare
-         that activity yet either, so no entry point here until then. -->
+    <!-- Network: Selective Band Lock -->
+    <PreferenceCategory
+        android:key="network_category"
+        android:title="@string/network_category_title">
+
+        <Preference
+            android:key="network_bands_entry"
+            android:icon="@drawable/ic_network_band_lock"
+            android:title="@string/network_bands_title"
+            android:summary="@string/network_bands_summary">
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.lineageos.device.DeviceSettings"
+                android:targetClass="org.lineageos.device.DeviceSettings.network.NetworkBandsActivity" />
+        </Preference>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
 

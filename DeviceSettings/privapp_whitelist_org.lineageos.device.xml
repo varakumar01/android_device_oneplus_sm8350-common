@@ -2,11 +2,14 @@
 <permissions>
     <privapp-permissions package="org.lineageos.device.DeviceSettings">
         <!-- MANAGE_GAME_MODE / GET_TASKS dropped: PowerTools-only (GameSpace
-             sync), excluded from this build entirely.
-             MODIFY_PHONE_STATE / READ_PHONE_STATE / READ_PRECISE_PHONE_STATE
-             dropped here too: only NetworkBandsFragment (band lock, a
-             separate commit) needs them; the manifest doesn't request them
-             in this base build. -->
+             sync), excluded from this build entirely. -->
         <permission name="android.permission.INTERACT_ACROSS_USERS" />
+        <!-- NetworkBandsFragment (band lock): see AndroidManifest.xml for
+             why each of these is actually needed. ACCESS_FINE_LOCATION /
+             ACCESS_COARSE_LOCATION are dangerous-level, not privileged, so
+             they don't belong in this whitelist. -->
+        <permission name="android.permission.MODIFY_PHONE_STATE" />
+        <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.READ_PRECISE_PHONE_STATE" />
     </privapp-permissions>
 </permissions>

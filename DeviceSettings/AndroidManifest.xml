@@ -27,10 +27,17 @@
     <uses-permission android:name="lineageos.permission.HARDWARE_ABSTRACTION_ACCESS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
-    <!-- MODIFY_PHONE_STATE / READ_PHONE_STATE / READ_PRECISE_PHONE_STATE /
-         ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION intentionally omitted
-         here -- only NetworkBandsFragment (band lock, a separate commit)
-         needs them; nothing in this base app uses telephony/location APIs. -->
+    <!-- NetworkBandsFragment (band lock): setAllowedNetworkTypesForReason() /
+         setSystemSelectionChannels() need MODIFY_PHONE_STATE; getServiceState()
+         and the detailed CellInfo/CellIdentity/PhysicalChannelConfig reads need
+         READ_PHONE_STATE / READ_PRECISE_PHONE_STATE; getAllCellInfo() and the
+         LocationManager provider check need ACCESS_FINE_LOCATION /
+         ACCESS_COARSE_LOCATION. -->
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PRECISE_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:icon="@drawable/ic_logo"
@@ -92,8 +99,15 @@
         </provider>
 
         <!-- PowerTools (activity, QS tile service, boot receiver, widget,
-             GameSpace sync) is excluded from this build entirely.
-             NetworkBandsActivity (band lock) ships in a separate commit. -->
+             GameSpace sync) is excluded from this build entirely. -->
+
+        <!-- Selective Band Lock sub-screen -->
+        <activity
+            android:name=".network.NetworkBandsActivity"
+            android:label="@string/network_bands_title"
+            android:theme="@style/Theme.DeviceSettings"
+            android:enableOnBackInvokedCallback="true"
+            android:exported="false" />
 
     </application>
 </manifest>
