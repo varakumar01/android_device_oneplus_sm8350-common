@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AxKernelManager;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.os.UserHandle;
@@ -55,6 +56,8 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
     private static final long[] TEST_VIB_PATTERN = { 0, 5 };
     private static final String DEFAULT_VIB_LEVEL = "3";
 
+    private static final String KEY_PERFORMANCE_PROFILE = PerformanceProfile.KEY;
+
     private static final Map<String, String> sBooleanNodePreferenceMap = new ArrayMap<>();
     private static final Map<String, String> sStringNodePreferenceMap = new ArrayMap<>();
 
@@ -62,6 +65,7 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
     private SwitchPreferenceCompat mEdgeTouchSwitch;
     private SwitchPreferenceCompat mUSB2FastChargeModeSwitch;
     private CustomSeekBarPreference mVibratorStrengthPreference;
+    private ListPreference mPerformanceProfilePreference;
     private Vibrator mVibrator;
 
     @Override
@@ -83,7 +87,24 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
             mVibratorStrengthPreference.setEnabled(false);
         }
 
-        
+        mPerformanceProfilePreference = (ListPreference) findPreference(KEY_PERFORMANCE_PROFILE);
+        if (mPerformanceProfilePreference != null) {
+            if (isKernelManagerAvailable()) {
+                mPerformanceProfilePreference.setOnPreferenceChangeListener(this);
+            } else {
+                mPerformanceProfilePreference.setEnabled(false);
+                mPerformanceProfilePreference.setSummary(
+                        R.string.performance_profile_unavailable_summary);
+            }
+        }
+    }
+
+    private boolean isKernelManagerAvailable() {
+        try {
+            return !new AxKernelManager().getControls().isEmpty();
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     private SwitchPreferenceCompat bindSwitchPref(String key, String sysfsPath) {
@@ -152,7 +173,19 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
         if (preference == mGameModeSwitch) return applySwitch(editor, KEY_GAME_SWITCH, FILE_GAME, (Boolean) newValue);
         if (preference == mEdgeTouchSwitch) return applySwitch(editor, KEY_EDGE_TOUCH, FILE_EDGE, (Boolean) newValue);
         if (preference == mUSB2FastChargeModeSwitch) return applySwitch(editor, KEY_USB2_SWITCH, FILE_FAST_CHARGE, (Boolean) newValue);
-        
+
+        if (preference == mPerformanceProfilePreference) {
+            int mode;
+            try {
+                mode = Integer.parseInt(newValue.toString());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            PerformanceProfile.apply(mode);
+            enforceVibPowersaveCap();
+            return true;
+        }
+
         if (preference == mVibratorStrengthPreference) {
             int value = Integer.parseInt(newValue.toString());
             if (SystemProperties.getInt("persist.sys.perf_mode_saved", 1) == 0 && value > 2) {
