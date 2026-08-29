@@ -1,0 +1,85 @@
+From: AxionOS <noreply@axionos>
+Subject: [PATCH] PackageInstaller/PMS: allow installing app downgrades
+
+The GUI installer never requests a downgrade, so replacing an app with
+an older versionCode always fails INSTALL_FAILED_VERSION_DOWNGRADE, even
+though `adb install -d` already works via
+PackageManagerShellCommand.setInstallReason()'s -d handling.
+
+Root cause: PackageManagerServiceUtils.isDowngradePermitted() requires
+INSTALL_REQUEST_DOWNGRADE in installFlags before even checking
+Build.IS_DEBUGGABLE / INSTALL_ALLOW_DOWNGRADE, and neither
+InstallStaging.createSessionParams() (v1 install flow) nor
+InstallRepository.createSessionParams() (v2 install flow) ever sets it.
+On this userdebug build Build.IS_DEBUGGABLE is already true, so once the
+REQUEST flag is set the existing isDebuggable check already grants it --
+the only missing piece for a userdebug build is the installer asking.
+
+Fix:
+* InstallStaging.java / InstallRepository.kt: call
+  SessionParams.setRequestDowngrade(true) in both createSessionParams()
+  implementations, since either flow may be active.
+* PackageManagerServiceUtils.isDowngradePermitted(): drop the
+  INSTALL_REQUEST_DOWNGRADE precondition itself, since it was a
+  redundant, install-UI-only trip hazard on top of the real
+  isDebuggable / INSTALL_ALLOW_DOWNGRADE gates below it.
+
+Widens the security surface intentionally: any installer holding
+INSTALL_PACKAGES can now request a downgrade over an existing app and
+inherit its data, not just first-party sideloads. Reversible by
+dropping these apply_patch lines. Full "works on a `user` build too"
+would additionally require loosening PackageInstallerService's
+INSTALL_ALLOW_DOWNGRADE stripping (only granted today to debuggable
+builds or root/system callers) -- deliberately not touched here, since
+this build is userdebug and that is a materially wider change.
+
+--- a/services/core/java/com/android/server/pm/PackageManagerServiceUtils.java
++++ b/services/core/java/com/android/server/pm/PackageManagerServiceUtils.java
+@@ -934,11 +934,12 @@
+         //
+         // In case of user builds, downgrade is permitted only for the system server initiated
+         // sessions. This is enforced by INSTALL_ALLOW_DOWNGRADE flag parameter.
+-        final boolean downgradeRequested =
+-                (installFlags & PackageManager.INSTALL_REQUEST_DOWNGRADE) != 0;
+-        if (!downgradeRequested) {
+-            return false;
+-        }
++        //
++        // AxionOS: no longer require INSTALL_REQUEST_DOWNGRADE up front -- the stock
++        // installer UI never sets it, which made every GUI-initiated downgrade fail
++        // regardless of build type. isDebuggable / INSTALL_ALLOW_DOWNGRADE below are the
++        // real gates; requiring the REQUEST flag too was a redundant, install-UI-only
++        // trip hazard.
+         final boolean isDebuggable = Build.IS_DEBUGGABLE || isAppDebuggable;
+         if (isDebuggable) {
+             return true;
+--- a/packages/PackageInstaller/src/com/android/packageinstaller/InstallStaging.java
++++ b/packages/PackageInstaller/src/com/android/packageinstaller/InstallStaging.java
+@@ -198,6 +198,11 @@
+         params.setInstallerPackageName(intent.getStringExtra(
+                 Intent.EXTRA_INSTALLER_PACKAGE_NAME));
+         params.setInstallReason(PackageManager.INSTALL_REASON_USER);
++        // AxionOS: allow installing a lower versionCode over an existing app instead of
++        // failing INSTALL_FAILED_VERSION_DOWNGRADE. isDowngradePermitted() still requires
++        // either a debuggable build/app or INSTALL_ALLOW_DOWNGRADE (system-initiated
++        // sessions only) before this actually takes effect.
++        params.setRequestDowngrade(true);
+         // Disable full screen intent usage by for sideloads.
+         params.setPermissionState(Manifest.permission.USE_FULL_SCREEN_INTENT,
+                 PackageInstaller.SessionParams.PERMISSION_STATE_DENIED);
+--- a/packages/PackageInstaller/src/com/android/packageinstaller/v2/model/InstallRepository.kt
++++ b/packages/PackageInstaller/src/com/android/packageinstaller/v2/model/InstallRepository.kt
+@@ -470,6 +470,11 @@
+         }
+         params.setInstallerPackageName(intent.getStringExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME))
+         params.setInstallReason(PackageManager.INSTALL_REASON_USER)
++        // AxionOS: allow installing a lower versionCode over an existing app instead of
++        // failing INSTALL_FAILED_VERSION_DOWNGRADE. isDowngradePermitted() still requires
++        // either a debuggable build/app or INSTALL_ALLOW_DOWNGRADE (system-initiated
++        // sessions only) before this actually takes effect.
++        params.setRequestDowngrade(true)
+         // Disable full screen intent usage by for sideloads.
+         params.setPermissionState(
+             Manifest.permission.USE_FULL_SCREEN_INTENT, SessionParams.PERMISSION_STATE_DENIED
+--
+2.40.0
