@@ -105,6 +105,12 @@ PRODUCT_COPY_FILES += \
 # Dalvik
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
+# Dexpreopt SystemUI with the full "speed" compiler filter instead of the
+# default profile-guided one -- it's one of the most latency-sensitive,
+# continuously-animating system apps, so leaving any of it to interpret/JIT
+# until its runtime profile warms back up shows as jank right after boot.
+PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
+
 # DebugFS
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
 
