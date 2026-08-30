@@ -98,6 +98,15 @@
             "Controller": "cpu",
             "Path": "top-app"
           }
+        },
+        {
+          "Name": "SetAttribute",
+          "Params":
+          {
+            "Name": "UClampMin",
+            "Value": "10",
+            "Optional": "true"
+          }
         }
       ]
     },
