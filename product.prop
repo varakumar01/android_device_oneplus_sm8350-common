@@ -10,3 +10,6 @@ ro.bpf.kver_override=5.10.239
 
 # GMS
 ro.opa.device_model_id=ga-oplus-skill-os121-211011
+
+# OTA
+lineage.updater.uri=https://raw.githubusercontent.com/varakumar01/scripts/aox/OTA/{variant}/{device}.json
