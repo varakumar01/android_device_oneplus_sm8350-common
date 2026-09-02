@@ -1,0 +1,57 @@
+diff --git a/packages/SystemUI/src/com/android/systemui/flashlight/data/repository/FlashlightRepository.kt b/packages/SystemUI/src/com/android/systemui/flashlight/data/repository/FlashlightRepository.kt
+index 0000000..0000000 100644
+--- a/packages/SystemUI/src/com/android/systemui/flashlight/data/repository/FlashlightRepository.kt
++++ b/packages/SystemUI/src/com/android/systemui/flashlight/data/repository/FlashlightRepository.kt
+@@ -122,6 +122,13 @@
+ 
+     private var activeFadeJob: kotlinx.coroutines.Job? = null
+ 
++    // Which direction activeFadeJob is fading, so a slider drag resting at 0 (which
++    // re-delivers setEnabled(false) every frame while currentState.enabled is still
++    // true, i.e. until the ramp's final setTorchMode(false)) doesn't restart the ramp
++    // on every frame and re-light the LED at its first step. Only read while
++    // activeFadeJob is active, so a stale value here is never observed.
++    private var activeFadeEnabled: Boolean? = null
++
+     override fun start() {
+         if (FlashlightStrength.isUnexpectedlyInLegacyMode()) {
+             return
+@@ -364,12 +371,27 @@
+ 
+             try {
+                 if (enabled != currentState.enabled) {
++                    // A slider drag resting at level 0 re-delivers setEnabled(false)
++                    // every frame, and currentState.enabled stays true until the ramp
++                    // below reaches its final setTorchMode(false) -- without this check
++                    // each frame would cancel and restart the ramp, re-lighting the LED
++                    // at its first (brightest) step every time.
++                    if (activeFadeJob?.isActive == true && activeFadeEnabled == enabled) {
++                        return@launch
++                    }
+                     activeFadeJob?.cancel()
++                    activeFadeEnabled = enabled
+ 
+                     if (currentFlashlightInfo.hasAdjustableLevels) {
+                         val targetLevel = defaultEnabledLevelForUser.getOrPut(currentUserId) {
+                             initialDefaultLevel
+                         }
++                        // Fade out from wherever the torch currently is, not from the
++                        // stored default -- otherwise turning off from a dimmed level
++                        // jumps the LED back up to the default brightness first.
++                        val fromLevel =
++                            ((currentState as? FlashlightModel.Available.Level)?.level
++                                ?: targetLevel).coerceAtLeast(1)
+ 
+                         activeFadeJob = bgScope.launch {
+                             val totalSteps = 12
+@@ -390,8 +412,8 @@
+                                 for (i in totalSteps downTo 1) {
+                                     val progress = i.toFloat() / totalSteps
+                                     val easedProgress = progress * progress
+-                                    val currentStepLevel = 1 + (easedProgress * (targetLevel - 1))
+-                                    val clampedLevel = currentStepLevel.toInt().coerceIn(1, targetLevel)
++                                    val currentStepLevel = 1 + (easedProgress * (fromLevel - 1))
++                                    val clampedLevel = currentStepLevel.toInt().coerceIn(1, fromLevel)
+                                     cameraManager.turnOnTorchWithStrengthLevel(currentFlashlightInfo.cameraId, clampedLevel)
+                                     delay(stepDelayMs)
+                                 }
