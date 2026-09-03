@@ -1,0 +1,42 @@
+diff --git a/app/src/main/java/org/lineageos/updater/ui/composable/UpdateCard.kt b/app/src/main/java/org/lineageos/updater/ui/composable/UpdateCard.kt
+index 99105ea..cf76378 100644
+--- a/app/src/main/java/org/lineageos/updater/ui/composable/UpdateCard.kt
++++ b/app/src/main/java/org/lineageos/updater/ui/composable/UpdateCard.kt
+@@ -170,7 +170,6 @@ fun UpdateCard(
+             ActionButtons(
+                 status = status,
+                 update = update,
+-                downloadProgress = downloadProgress,
+                 callbacks = callbacks
+             )
+         }
+@@ -181,15 +180,27 @@ fun UpdateCard(
+ private fun ActionButtons(
+     status: UpdateStatus,
+     update: UpdateInfo,
+-    downloadProgress: Float,
+     callbacks: UpdaterCallbacks
+ ) {
++    // A file is on disk (and therefore deletable) for every status except these three:
++    // nothing was ever downloaded (UNKNOWN), it was already removed (DELETED), or it was
++    // consumed by a successful install (INSTALLED). Deletion is also pointless while a
++    // transfer/install is actively in flight -- UpdaterController.deleteUpdate() no-ops on
++    // an in-progress download anyway -- so DOWNLOADING/STARTING/INSTALLING stay off the list.
++    val hasDeletableFile = status !in setOf(
++        UpdateStatus.UNKNOWN,
++        UpdateStatus.DELETED,
++        UpdateStatus.INSTALLED,
++        UpdateStatus.DOWNLOADING,
++        UpdateStatus.STARTING,
++        UpdateStatus.INSTALLING
++    )
+     Row(
+         modifier = Modifier.fillMaxWidth(),
+         horizontalArrangement = Arrangement.spacedBy(8.dp),
+         verticalAlignment = Alignment.CenterVertically
+     ) {
+-        if (downloadProgress > 0f && status != UpdateStatus.INSTALLED) {
++        if (hasDeletableFile) {
+             TextButton(onClick = { callbacks.onDelete(update) }) {
+                 Icon(Icons.Default.Delete, contentDescription = null, Modifier.size(18.dp))
+                 Spacer(Modifier.width(4.dp))
