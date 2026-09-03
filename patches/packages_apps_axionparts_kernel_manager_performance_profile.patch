@@ -1,0 +1,116 @@
+--- a/src/com/android/axion/axionparts/ui/screens/KernelManagerScreen.kt
++++ b/src/com/android/axion/axionparts/ui/screens/KernelManagerScreen.kt
+@@ -168,6 +168,12 @@
+     ) {
+         Spacer(modifier = Modifier.height(8.dp))
+ 
++        PerformanceProfileGroup(
++            clusters = clusters,
++            kernelManager = kernelManager,
++            onKernelControlsChanged = refreshKernelControls,
++        )
++
+         clusters.forEach { cluster ->
+             if (cluster.maxFreq > 0) {
+                 ClusterGroup(
+@@ -435,3 +441,82 @@
+         },
+     )
+ }
++
++private const val CUSTOM_PROFILE = "custom"
++
++/**
++ * A profile is just "set every CPU cluster's governor to the same value" --
++ * the same [setKernelControl] call each cluster's own [GovernorPreference]
++ * makes. There is no separate mechanism to keep in sync: this group reads its
++ * "current profile" straight off the per-cluster governor controls, so a
++ * profile picked here is immediately reflected (and just as immediately
++ * overridable) by the cluster dropdowns below it, and vice versa.
++ */
++@Composable
++private fun PerformanceProfileGroup(
++    clusters: List<ClusterConfig>,
++    kernelManager: AxKernelManager,
++    onKernelControlsChanged: () -> Unit,
++) {
++    val govControls = clusters.mapNotNull { it.governorControl }
++    if (govControls.size < 2) return
++
++    // Only offer governors every cluster actually supports, in the first
++    // cluster's order.
++    val shared = govControls.map { it.valueLabels.toSet() }.reduce { a, b -> a intersect b }
++    val profiles = govControls.first().valueLabels.filter { it in shared }
++    if (profiles.isEmpty()) return
++
++    val current = govControls
++        .map { c -> c.valueLabels.getOrNull(c.availableValues.indexOf(c.currentValue)) }
++        .distinct()
++        .singleOrNull()
++        ?.takeIf { it in profiles }
++        ?: CUSTOM_PROFILE
++
++    // "Custom" is a state, not a choice a user picks -- only list it while
++    // it's actually current, so it can never be selected into.
++    val options = buildList {
++        profiles.forEach { add(it to governorDisplayName(it)) }
++        if (current == CUSTOM_PROFILE) {
++            add(CUSTOM_PROFILE to stringResource(R.string.performance_profile_custom))
++        }
++    }
++
++    PreferenceGroup(title = stringResource(R.string.performance_profile)) {
++        item {
++            ListPreference(
++                title = stringResource(R.string.performance_profile),
++                summary = options.firstOrNull { it.first == current }?.second.orEmpty(),
++                options = options,
++                value = current,
++                onValueChange = { picked ->
++                    if (picked != CUSTOM_PROFILE) {
++                        govControls.forEach { control ->
++                            val index = control.valueLabels.indexOf(picked)
++                            if (index >= 0) {
++                                setKernelControl(
++                                    kernelManager,
++                                    control,
++                                    control.availableValues[index],
++                                    onKernelControlsChanged,
++                                )
++                            }
++                        }
++                    }
++                },
++            )
++        }
++    }
++}
++
++@Composable
++private fun governorDisplayName(governor: String): String =
++    when (governor) {
++        "schedutil" -> stringResource(R.string.performance_profile_balanced)
++        "performance" -> stringResource(R.string.performance_profile_performance)
++        "powersave" -> stringResource(R.string.performance_profile_battery)
++        "conservative" -> stringResource(R.string.performance_profile_conservative)
++        "ondemand" -> stringResource(R.string.performance_profile_adaptive)
++        else -> governor.replaceFirstChar { it.uppercase() }
++    }
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -354,7 +354,14 @@
+     <string name="background_manager">Background Manager</string>
+     <string name="background_manager_summary">Manage app freezing and background start limits</string>
+     <string name="kernel_manager">Kernel Manager</string>
+-    <string name="kernel_manager_summary">Tune CPU and GPU frequency limits</string>
++    <string name="kernel_manager_summary">Performance profile, CPU and GPU frequency limits</string>
++    <string name="performance_profile">Performance profile</string>
++    <string name="performance_profile_custom">Custom</string>
++    <string name="performance_profile_balanced">Balanced</string>
++    <string name="performance_profile_performance">Performance</string>
++    <string name="performance_profile_battery">Battery saver</string>
++    <string name="performance_profile_conservative">Conservative</string>
++    <string name="performance_profile_adaptive">Adaptive</string>
+     <string name="ram_plus">RAM Plus</string>
+     <string name="ram_plus_summary">Extend available memory with internal storage</string>
+     <string name="ram_plus_configuration">Configuration</string>
