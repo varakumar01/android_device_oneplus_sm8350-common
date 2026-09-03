@@ -1,0 +1,56 @@
+diff --git a/app/src/main/java/org/lineageos/updater/UpdatesDbHelper.java b/app/src/main/java/org/lineageos/updater/UpdatesDbHelper.java
+index 6c11a60..d28035b 100644
+--- a/app/src/main/java/org/lineageos/updater/UpdatesDbHelper.java
++++ b/app/src/main/java/org/lineageos/updater/UpdatesDbHelper.java
+@@ -30,7 +30,7 @@ import java.util.List;
+ 
+ public class UpdatesDbHelper extends SQLiteOpenHelper {
+ 
+-    public static final int DATABASE_VERSION = 1;
++    public static final int DATABASE_VERSION = 2;
+     public static final String DATABASE_NAME = "updates.db";
+ 
+     public static class UpdateEntry implements BaseColumns {
+@@ -42,6 +42,7 @@ public class UpdatesDbHelper extends SQLiteOpenHelper {
+         public static final String COLUMN_NAME_TYPE = "type";
+         public static final String COLUMN_NAME_VERSION = "version";
+         public static final String COLUMN_NAME_SIZE = "size";
++        public static final String COLUMN_NAME_DOWNLOAD_URL = "download_url";
+     }
+ 
+     private static final String SQL_CREATE_ENTRIES =
+@@ -53,7 +54,8 @@ public class UpdatesDbHelper extends SQLiteOpenHelper {
+                     UpdateEntry.COLUMN_NAME_TIMESTAMP + " INTEGER," +
+                     UpdateEntry.COLUMN_NAME_TYPE + " TEXT," +
+                     UpdateEntry.COLUMN_NAME_VERSION + " TEXT," +
+-                    UpdateEntry.COLUMN_NAME_SIZE + " INTEGER)";
++                    UpdateEntry.COLUMN_NAME_SIZE + " INTEGER," +
++                    UpdateEntry.COLUMN_NAME_DOWNLOAD_URL + " TEXT)";
+ 
+     private static final String SQL_DELETE_ENTRIES =
+             "DROP TABLE IF EXISTS " + UpdateEntry.TABLE_NAME;
+@@ -90,6 +92,7 @@ public class UpdatesDbHelper extends SQLiteOpenHelper {
+         values.put(UpdateEntry.COLUMN_NAME_TYPE, update.getType());
+         values.put(UpdateEntry.COLUMN_NAME_VERSION, update.getVersion());
+         values.put(UpdateEntry.COLUMN_NAME_SIZE, update.getFileSize());
++        values.put(UpdateEntry.COLUMN_NAME_DOWNLOAD_URL, update.getDownloadUrl());
+     }
+ 
+     public void removeUpdate(String downloadId) {
+@@ -127,6 +130,7 @@ public class UpdatesDbHelper extends SQLiteOpenHelper {
+                 UpdateEntry.COLUMN_NAME_VERSION,
+                 UpdateEntry.COLUMN_NAME_STATUS,
+                 UpdateEntry.COLUMN_NAME_SIZE,
++                UpdateEntry.COLUMN_NAME_DOWNLOAD_URL,
+         };
+         String sort = UpdateEntry.COLUMN_NAME_TIMESTAMP + " DESC";
+         Cursor cursor = db.query(UpdateEntry.TABLE_NAME, projection, selection, selectionArgs,
+@@ -150,6 +154,8 @@ public class UpdatesDbHelper extends SQLiteOpenHelper {
+                 update.setPersistentStatus(cursor.getInt(index));
+                 index = cursor.getColumnIndex(UpdateEntry.COLUMN_NAME_SIZE);
+                 update.setFileSize(cursor.getLong(index));
++                index = cursor.getColumnIndex(UpdateEntry.COLUMN_NAME_DOWNLOAD_URL);
++                update.setDownloadUrl(cursor.getString(index));
+                 updates.add(update);
+             }
+             cursor.close();
