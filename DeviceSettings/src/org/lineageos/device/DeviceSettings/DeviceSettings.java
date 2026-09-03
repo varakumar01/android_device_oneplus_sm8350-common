@@ -21,11 +21,9 @@ import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.Vibrator;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceGroup;
@@ -103,7 +101,6 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
     public void onResume() {
         super.onResume();
         enforceTouchPanelPolicy();
-        enforceVibPowersaveCap();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.device_title);
         }
@@ -125,23 +122,6 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
         }
     }
 
-    private void enforceVibPowersaveCap() {
-        if (mVibratorStrengthPreference == null || !mVibratorStrengthPreference.isEnabled()) return;
-        
-        boolean isPowersave = SystemProperties.getInt("persist.sys.perf_mode_saved", 1) == 0;
-        int currentMax = isPowersave ? 2 : 3; 
-        mVibratorStrengthPreference.setMaxValue(currentMax);
-        
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int currentVal = sharedPrefs.getInt(KEY_VIBSTRENGTH, 3);
-        
-        if (isPowersave && currentVal > 2) {
-            mVibratorStrengthPreference.setValue(2);
-            sharedPrefs.edit().putInt(KEY_VIBSTRENGTH, 2).apply();
-            Utils.writeValue(FILE_LEVEL, "2");
-        }
-    }
-
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
@@ -153,10 +133,6 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
 
         if (preference == mVibratorStrengthPreference) {
             int value = Integer.parseInt(newValue.toString());
-            if (SystemProperties.getInt("persist.sys.perf_mode_saved", 1) == 0 && value > 2) {
-                Toast.makeText(getContext(), "Vibration capped at level 2 in Powersave mode", Toast.LENGTH_SHORT).show();
-                return false;
-            }
             editor.putInt(KEY_VIBSTRENGTH, value).apply();
             Utils.writeValue(FILE_LEVEL, String.valueOf(value));
             if (mVibrator != null && mVibrator.hasVibrator()) {
