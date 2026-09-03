@@ -105,11 +105,15 @@ PRODUCT_COPY_FILES += \
 # Dalvik
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
-# Dexpreopt SystemUI with the full "speed" compiler filter instead of the
-# default profile-guided one -- it's one of the most latency-sensitive,
-# continuously-animating system apps, so leaving any of it to interpret/JIT
-# until its runtime profile warms back up shows as jank right after boot.
-PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
+# Dexpreopt with the full "speed" compiler filter instead of the default
+# quicken/verify one. Nothing in this tree ships an ART profile, so anything not
+# listed here (or by vendor/lineage/config/common.mk and
+# device/axion/common/config/dexpreopt.mk) stays interpreted+JIT until its runtime
+# profile warms. Aperture and Glimpse are the two shipped apps left where that
+# shows as visible cold-start latency.
+PRODUCT_DEXPREOPT_SPEED_APPS += \
+    Aperture \
+    Glimpse
 
 # DebugFS
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
