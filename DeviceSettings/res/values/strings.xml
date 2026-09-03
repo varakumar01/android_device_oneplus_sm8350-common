@@ -19,15 +19,6 @@
     <string name="device_title">OnePlus Settings</string>
     <string name="device_summary">Adjust OnePlus specific device settings</string>
 
-    <!-- Performance profile picker -->
-    <string name="performance_category_title">Performance</string>
-    <string name="performance_profile_title">Performance profile</string>
-    <string name="performance_profile_summary">Choose how the CPU clusters should behave</string>
-    <string name="performance_profile_performance">Performance</string>
-    <string name="performance_profile_balanced">Balanced</string>
-    <string name="performance_profile_powersave">Powersave</string>
-    <string name="performance_profile_unavailable_summary">Kernel Manager isn’t available on this build</string>
-
     <!-- Vibration control -->
     <string name="category_vibrator">Vibrator</string>
     <string name="vib_strength_title_head">Strength</string>

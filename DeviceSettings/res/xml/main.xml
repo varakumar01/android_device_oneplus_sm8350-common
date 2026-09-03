@@ -78,22 +78,9 @@
             android:defaultValue="3" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="performance"
-        android:title="@string/performance_category_title">
-
-        <ListPreference
-            android:key="performance_profile"
-            android:icon="@drawable/ic_performance_profile"
-            android:title="@string/performance_profile_title"
-            android:summary="@string/performance_profile_summary"
-            android:entries="@array/performance_profile_entries"
-            android:entryValues="@array/performance_profile_values"
-            android:defaultValue="1"
-            android:persistent="true" />
-    </PreferenceCategory>
-
-    <!-- Powertools intentionally omitted here: excluded from this build entirely. -->
+    <!-- Performance profile moved to AxionParts' Kernel Manager (governor-driven,
+         one profile per available CPU governor). Powertools intentionally omitted
+         here: excluded from this build entirely. -->
 
     <!-- Network: Selective Band Lock -->
     <PreferenceCategory
