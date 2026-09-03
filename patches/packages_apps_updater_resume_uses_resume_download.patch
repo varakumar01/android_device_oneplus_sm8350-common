@@ -1,0 +1,13 @@
+diff --git a/app/src/main/java/org/lineageos/updater/ui/viewmodel/UpdaterViewModel.kt b/app/src/main/java/org/lineageos/updater/ui/viewmodel/UpdaterViewModel.kt
+index 7e07c04..322518d 100644
+--- a/app/src/main/java/org/lineageos/updater/ui/viewmodel/UpdaterViewModel.kt
++++ b/app/src/main/java/org/lineageos/updater/ui/viewmodel/UpdaterViewModel.kt
+@@ -134,7 +134,7 @@ class UpdaterViewModel(application: Application) : AndroidViewModel(application)
+     fun resumeDownload(update: UpdateInfo) {
+         val ctx = getApplication<Application>()
+         updaterController?.takeIf { Utils.isNetworkAvailable(ctx) }
+-            ?.startDownload(update.downloadId)
++            ?.resumeDownload(update.downloadId)
+             ?: showToast(ctx.getString(R.string.no_connection_or_service))
+     }
+ 
