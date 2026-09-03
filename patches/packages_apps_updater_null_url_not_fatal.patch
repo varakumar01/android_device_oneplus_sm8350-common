@@ -1,0 +1,22 @@
+diff --git a/app/src/main/java/org/lineageos/updater/controller/UpdaterController.java b/app/src/main/java/org/lineageos/updater/controller/UpdaterController.java
+index a99b610..2dffccc 100644
+--- a/app/src/main/java/org/lineageos/updater/controller/UpdaterController.java
++++ b/app/src/main/java/org/lineageos/updater/controller/UpdaterController.java
+@@ -405,7 +405,7 @@ public class UpdaterController {
+                     .setProgressListener(getProgressListener(downloadId))
+                     .setUseDuplicateLinks(true)
+                     .build();
+-        } catch (IOException exception) {
++        } catch (IOException | IllegalStateException exception) {
+             Log.e(TAG, "Could not build download client");
+             update.setStatus(UpdateStatus.PAUSED_ERROR);
+             notifyUpdateChange(downloadId);
+@@ -452,7 +452,7 @@ public class UpdaterController {
+                         .setProgressListener(getProgressListener(downloadId))
+                         .setUseDuplicateLinks(true)
+                         .build();
+-            } catch (IOException exception) {
++            } catch (IOException | IllegalStateException exception) {
+                 Log.e(TAG, "Could not build download client");
+                 update.setStatus(UpdateStatus.PAUSED_ERROR);
+                 notifyUpdateChange(downloadId);
