@@ -1,0 +1,52 @@
+--- a/payload_consumer/delta_performer.cc
++++ b/payload_consumer/delta_performer.cc
+@@ -400,41 +400,14 @@
+       20);
+ 
+ bool DeltaPerformer::CheckSPLDowngrade() {
+-  if (!manifest_.has_security_patch_level()) {
+-    return true;
+-  }
+-  if (manifest_.security_patch_level().empty()) {
+-    return true;
+-  }
+-  const auto new_spl = manifest_.security_patch_level();
+-  const auto current_spl =
+-      android::base::GetProperty("ro.build.version.security_patch", "");
+-  if (current_spl.empty()) {
+-    LOG(WARNING) << "Failed to get ro.build.version.security_patch, unable to "
+-                    "determine if this OTA is a SPL downgrade. Assuming this "
+-                    "OTA is not SPL downgrade.";
+-    return true;
+-  }
+-  if (new_spl < current_spl) {
+-    const auto avb_state =
+-        android::base::GetProperty("ro.boot.verifiedbootstate", "green");
+-    if (android::base::EqualsIgnoreCase(avb_state, "green")) {
+-      LOG(ERROR) << "Target build SPL " << new_spl
+-                 << " is older than current build's SPL " << current_spl
+-                 << ", this OTA is an SPL downgrade. Your device's "
+-                    "ro.boot.verifiedbootstate="
+-                 << avb_state
+-                 << ", it probably has a locked bootlaoder. Since a locked "
+-                    "bootloader will reject SPL downgrade no matter what, we "
+-                    "will reject this OTA.";
+-      return false;
+-    }
+-    install_plan_->powerwash_required = true;
+-    LOG(WARNING)
+-        << "Target build SPL " << new_spl
+-        << " is older than current build's SPL " << current_spl
+-        << ", this OTA is an SPL downgrade. Data wipe will be required";
+-  }
++  // AxionOS targets unlocked bootloaders only, and
++  // ro.build.version.security_patch / ro.boot.verifiedbootstate are not
++  // trustworthy on a device running root/integrity-spoofing tooling
++  // (TrickyStore, PlayIntegrityFix, etc.) -- both can read as a false
++  // "locked, downgrading" state regardless of the real device or the
++  // real OTA, turning a normal update into a hard reject or a forced
++  // data wipe. AxionOS never ships a genuine SPL downgrade, so there is
++  // nothing legitimate this check protects here.
+   return true;
+ }
+ 
