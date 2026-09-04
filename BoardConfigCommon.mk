@@ -23,15 +23,6 @@ AB_OTA_PARTITIONS += \
     vendor_boot \
     vendor_dlkm
 
-# Have ota_from_target_files write SPL_DOWNGRADE=1 into payload_properties.txt
-# (build/make/core/Makefile, gated on this var) so update_engine's
-# CheckSPLDowngrade() is skipped instead of hard-rejecting or powerwashing an
-# OTA whose SPL reads older than the device's current one -- root/integrity
-# spoofing tooling (TrickyStore, PlayIntegrityFix) can make
-# ro.build.version.security_patch read back an arbitrary value on a normal,
-# non-downgrade update.
-TARGET_OTA_ALLOW_SPL_DOWNGRADE := true
-
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-2a-dotprod
