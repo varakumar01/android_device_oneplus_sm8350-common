@@ -1,0 +1,11 @@
+--- a/ax_deviceinfo/src/com/android/axion/deviceinfo/DeviceInfoProvider.kt
++++ b/ax_deviceinfo/src/com/android/axion/deviceinfo/DeviceInfoProvider.kt
+@@ -214,7 +214,7 @@
+
+     fun getBatteryCapacity(context: Context): String {
+         val batteryIntent = context.registerReceiver(null,IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+-        val designCapacityMah = batteryIntent?.getLongExtra(BatteryManager.EXTRA_DESIGN_CAPACITY,-1L) ?: -1L
++        val designCapacityMah = (batteryIntent?.getIntExtra(BatteryManager.EXTRA_DESIGN_CAPACITY,-1) ?: -1).toLong()
+         val capacityMah = if (designCapacityMah > 0L) {
+             designCapacityMah
+         } else {
