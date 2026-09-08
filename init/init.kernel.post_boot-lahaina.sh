@@ -175,7 +175,7 @@ echo 0 > /proc/sys/kernel/sched_boost
 # NOTE: scaling_governor and scaling_min_freq are owned by AxKernelManager
 # (ax_kernel_manager_lahaina.xml) -- this script used to stomp them ~7s after
 # AxKernelManager's boot-time restore, silently discarding any user-set value.
-echo 5000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
+echo 20000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 echo 500 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us
 if [ $rev == "1.0" ]; then
 	echo 1190400 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_freq
