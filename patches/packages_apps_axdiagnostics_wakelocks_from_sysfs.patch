@@ -1,0 +1,44 @@
+diff --git a/src/com/axion/diagnostics/data/WakelockInfo.kt b/src/com/axion/diagnostics/data/WakelockInfo.kt
+index 1c12fe9..77e48eb 100644
+--- a/src/com/axion/diagnostics/data/WakelockInfo.kt
++++ b/src/com/axion/diagnostics/data/WakelockInfo.kt
+@@ -57,8 +57,9 @@ object WakelockCollector {
+                 wakelocks.add(entry)
+             }
+         } else {
++            wakelocks.addAll(readSysfsWakeupSources())
+             val procWakelocks = File("/proc/wakelocks")
+-            if (procWakelocks.exists()) {
++            if (wakelocks.isEmpty() && procWakelocks.exists()) {
+                 val lines = runCatching { procWakelocks.readLines() }.getOrDefault(emptyList())
+                 for (line in lines.drop(1)) {
+                     val entry = parseProcWakelock(line) ?: continue
+@@ -75,6 +76,28 @@ object WakelockCollector {
+         )
+     }
+ 
++    // Kernels without a readable debugfs expose the same counters one directory per source
++    // under /sys/class/wakeup (drivers/base/power/wakeup_stats.c).
++    private fun readSysfsWakeupSources(): List<WakelockEntry> =
++        File("/sys/class/wakeup").listFiles()?.mapNotNull { dir ->
++            fun read(attr: String): Long =
++                runCatching { File(dir, attr).readText().trim().toLong() }.getOrDefault(0L)
++            val name = runCatching { File(dir, "name").readText().trim() }.getOrNull()
++            if (name.isNullOrEmpty()) return@mapNotNull null
++            WakelockEntry(
++                name = name,
++                activeCount = read("active_count"),
++                eventCount = read("event_count"),
++                wakeupCount = read("wakeup_count"),
++                expireCount = read("expire_count"),
++                activeSinceMs = read("active_time_ms"),
++                totalTimeMs = read("total_time_ms"),
++                maxTimeMs = read("max_time_ms"),
++                lastChangeMs = read("last_change_ms"),
++                preventSuspendTimeMs = read("prevent_suspend_time_ms")
++            )
++        }.orEmpty()
++
+     private fun parseWakeupSource(line: String): WakelockEntry? {
+         val parts = line.trim().split("\\s+".toRegex())
+         val valueCount = 9
