@@ -1,0 +1,63 @@
+diff --git a/src/com/axion/diagnostics/data/ThermalInfo.kt b/src/com/axion/diagnostics/data/ThermalInfo.kt
+index 7c4e9b5..c425959 100644
+--- a/src/com/axion/diagnostics/data/ThermalInfo.kt
++++ b/src/com/axion/diagnostics/data/ThermalInfo.kt
+@@ -41,7 +41,9 @@ data class ThermalSnapshot(
+     val zones: List<ThermalZone>,
+     val coolingDevices: List<CoolingDevice>,
+     val maxTemperature: Float,
+-    val hottest: String
++    val hottest: String,
++    // Zones whose node isn't a temperature (socd = 100 - battery %, vbat, ibat, bcl, disabled).
++    val nonTemperatureZones: List<ThermalZone> = emptyList()
+ )
+ 
+ object ThermalCollector {
+@@ -111,14 +113,14 @@ object ThermalCollector {
+             coolingDevices.add(CoolingDevice(cdDir.name, type, curState, maxState))
+         }
+ 
+-        val maxTemp = zones
+-            .filter { isTemperatureZone(it) }
+-            .maxByOrNull { it.temperatureC }
++        val (temperatureZones, otherZones) = zones.partition { isTemperatureZone(it) }
++        val maxTemp = temperatureZones.maxByOrNull { it.temperatureC }
+         return ThermalSnapshot(
+-            zones = zones,
++            zones = temperatureZones,
+             coolingDevices = coolingDevices,
+             maxTemperature = maxTemp?.temperatureC ?: 0f,
+-            hottest = maxTemp?.type ?: "none"
++            hottest = maxTemp?.type ?: "none",
++            nonTemperatureZones = otherZones
+         )
+     }
+ 
+diff --git a/src/com/axion/diagnostics/export/ReportExporter.kt b/src/com/axion/diagnostics/export/ReportExporter.kt
+index 36a1896..b757fc3 100644
+--- a/src/com/axion/diagnostics/export/ReportExporter.kt
++++ b/src/com/axion/diagnostics/export/ReportExporter.kt
+@@ -173,6 +173,10 @@ object ReportExporter {
+         }
+         sb.appendLine("Current: $currentSign${kotlin.math.abs(bat.currentNowMa)} mA$currentAvg")
+         sb.appendLine("Voltage: %.3fV | Temperature: %.1f°C".format(bat.voltageV, bat.temperatureC))
++        // The kernel exposes battery depletion (100 - level) as the thermal zone "socd".
++        ThermalCollector.collect().nonTemperatureZones.firstOrNull { it.type == "socd" }?.let {
++            sb.appendLine("Depletion (socd, 100 - level): %.0f%%".format(it.temperatureC))
++        }
+         if (bat.capacityUah > 0) sb.appendLine("Capacity: ${bat.capacityUah / 1000} mAh")
+         if (bat.cycleCount > 0) sb.appendLine("Cycle Count: ${bat.cycleCount}")
+         if (bat.drainRatePerHour > 0) {
+@@ -189,11 +193,7 @@ object ReportExporter {
+         sb.appendLine("Hottest: ${thermal.hottest} @ %.1f°C".format(thermal.maxTemperature))
+         sb.appendLine()
+         thermal.zones.sortedByDescending { it.temperatureC }.forEach { zone ->
+-            if (ThermalCollector.isTemperatureZone(zone)) {
+-                sb.appendLine("  %-25s %.1f°C".format(zone.type, zone.temperatureC))
+-            } else {
+-                sb.appendLine("  %-25s %.1f (not a temperature)".format(zone.type, zone.temperatureC))
+-            }
++            sb.appendLine("  %-25s %.1f°C".format(zone.type, zone.temperatureC))
+         }
+         sb.appendLine()
+         val activeCooling = thermal.coolingDevices.filter { it.currentState > 0 }
