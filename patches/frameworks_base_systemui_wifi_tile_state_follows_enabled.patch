@@ -1,0 +1,74 @@
+From: AxionOS <noreply@axionos>
+Subject: [PATCH] SystemUI: Wi-Fi tile state follows Wi-Fi enabled, not default-network
+
+WifiTileUserActionInteractor.handleClick() toggles on
+WifiRepository.isWifiEnabled, but WifiTileDataInteractor only rendered
+the tile Active when Wi-Fi was also the default network. With Wi-Fi on
+but mobile data as default (nothing saved in range, or not validated),
+the tile was grey while a tap turned Wi-Fi off.
+
+Fix:
+* WifiTileDataInteractor: enabled but not default network is Active
+  (no-signal icon, "not connected" label); only fully off is Inactive.
+* WifiRepositoryImpl.isWifiEnabled: WIFI_STATE_ENABLING counts as
+  enabled, so a tap while Wi-Fi is still coming up turns it off instead
+  of re-enabling it.
+* WifiRepositoryImpl.disableWifi(): cancel the Scanning timeout job and
+  reset the toggle state; enableWifi() starts a 10s Scanning state that
+  disabling never cleared, keeping the tile lit after turning off.
+---
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/domain/interactor/WifiTileDataInteractor.kt b/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/domain/interactor/WifiTileDataInteractor.kt
+index f318181..8379bbe 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/domain/interactor/WifiTileDataInteractor.kt
++++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/domain/interactor/WifiTileDataInteractor.kt
+@@ -172,15 +172,17 @@ constructor(
+                 )
+             }
+ 
++            // The tap toggles on isEnabled, so the tile state has to follow it too: enabled but
++            // not (yet) the default network is Active, only fully off is Inactive.
++            if (isEnabled) {
++                return@combine WifiTileModel.Active(
++                    icon = WifiTileIconModel(WifiIcons.WIFI_NO_SIGNAL),
++                    secondaryLabel = notConnectedDescription,
++                )
++            }
++
+             WifiTileModel.Inactive(
+-                icon =
+-                    WifiTileIconModel(
+-                        if (isEnabled) {
+-                            WifiIcons.WIFI_NO_SIGNAL
+-                        } else {
+-                            R.drawable.ic_signal_wifi_off
+-                        }
+-                    ),
++                icon = WifiTileIconModel(R.drawable.ic_signal_wifi_off),
+                 secondaryLabel = notConnectedDescription,
+             )
+         }.onStart { dataUsageRepository.refresh() }
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/wifi/data/repository/prod/WifiRepositoryImpl.kt b/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/wifi/data/repository/prod/WifiRepositoryImpl.kt
+index b705cc6..b318094 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/wifi/data/repository/prod/WifiRepositoryImpl.kt
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/wifi/data/repository/prod/WifiRepositoryImpl.kt
+@@ -311,7 +311,10 @@ constructor(
+ 
+     override val isWifiEnabled: StateFlow<Boolean> =
+         wifiPickerTrackerInfo
+-            .map { it.state == WifiManager.WIFI_STATE_ENABLED }
++            .map {
++                it.state == WifiManager.WIFI_STATE_ENABLED ||
++                    it.state == WifiManager.WIFI_STATE_ENABLING
++            }
+             .distinctUntilChanged()
+             .logDiffsForTable(tableLogger, columnName = COL_NAME_IS_ENABLED, initialValue = false)
+             .stateIn(scope, SharingStarted.Eagerly, false)
+@@ -490,6 +493,8 @@ constructor(
+     }
+ 
+     override fun disableWifi() {
++        cancelOptimisticToggleTimeoutJobs()
++        _wifiToggleState.value = WifiToggleState.Normal
+         wifiManager.setWifiEnabled(false)
+     }
+ 
