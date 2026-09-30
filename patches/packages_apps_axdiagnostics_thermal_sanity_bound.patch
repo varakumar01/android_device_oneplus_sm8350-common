@@ -1,7 +1,8 @@
 diff --git a/src/com/axion/diagnostics/data/ThermalInfo.kt b/src/com/axion/diagnostics/data/ThermalInfo.kt
+index 4c1e822..7c4e9b5 100644
 --- a/src/com/axion/diagnostics/data/ThermalInfo.kt
 +++ b/src/com/axion/diagnostics/data/ThermalInfo.kt
-@@ -46,6 +46,18 @@
+@@ -46,6 +46,27 @@ data class ThermalSnapshot(
  
  object ThermalCollector {
  
@@ -17,17 +18,43 @@ diff --git a/src/com/axion/diagnostics/data/ThermalInfo.kt b/src/com/axion/diagn
 +    private const val PLAUSIBLE_MIN_C = -60f
 +    private const val PLAUSIBLE_MAX_C = 150f
 +
++    // Zones whose "temp" is a different quantity that can land inside the plausible
++    // range: socd is (100 - battery %), vbat is mV / 1000, ibat is mA / 1000 and the
++    // bcl zones are 0/1 state, all of which the kernel reports through the same node.
++    private val NON_TEMPERATURE_ZONE = Regex("^(socd|vbat)$|bcl|ibat", RegexOption.IGNORE_CASE)
++
++    fun isTemperatureZone(zone: ThermalZone): Boolean =
++        zone.temperatureC in PLAUSIBLE_MIN_C..PLAUSIBLE_MAX_C &&
++            !NON_TEMPERATURE_ZONE.containsMatchIn(zone.type)
++
      fun collect(): ThermalSnapshot {
          val zones = mutableListOf<ThermalZone>()
          var thermalDir = File("/sys/class/thermal/")
-@@ -90,7 +102,9 @@
+@@ -90,7 +111,9 @@ object ThermalCollector {
              coolingDevices.add(CoolingDevice(cdDir.name, type, curState, maxState))
          }
  
 -        val maxTemp = zones.maxByOrNull { it.temperatureC }
 +        val maxTemp = zones
-+            .filter { it.temperatureC in PLAUSIBLE_MIN_C..PLAUSIBLE_MAX_C }
++            .filter { isTemperatureZone(it) }
 +            .maxByOrNull { it.temperatureC }
          return ThermalSnapshot(
              zones = zones,
              coolingDevices = coolingDevices,
+diff --git a/src/com/axion/diagnostics/export/ReportExporter.kt b/src/com/axion/diagnostics/export/ReportExporter.kt
+index 78572bf..68debb5 100644
+--- a/src/com/axion/diagnostics/export/ReportExporter.kt
++++ b/src/com/axion/diagnostics/export/ReportExporter.kt
+@@ -169,7 +169,11 @@ object ReportExporter {
+         sb.appendLine("Hottest: ${thermal.hottest} @ %.1f°C".format(thermal.maxTemperature))
+         sb.appendLine()
+         thermal.zones.sortedByDescending { it.temperatureC }.forEach { zone ->
+-            sb.appendLine("  %-25s %.1f°C".format(zone.type, zone.temperatureC))
++            if (ThermalCollector.isTemperatureZone(zone)) {
++                sb.appendLine("  %-25s %.1f°C".format(zone.type, zone.temperatureC))
++            } else {
++                sb.appendLine("  %-25s %.1f (not a temperature)".format(zone.type, zone.temperatureC))
++            }
+         }
+         sb.appendLine()
+         val activeCooling = thermal.coolingDevices.filter { it.currentState > 0 }
