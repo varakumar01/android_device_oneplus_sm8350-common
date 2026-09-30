@@ -1,0 +1,28 @@
+diff --git a/src/com/axion/diagnostics/data/SystemServerAnalyzer.kt b/src/com/axion/diagnostics/data/SystemServerAnalyzer.kt
+index b388491..427c742 100644
+--- a/src/com/axion/diagnostics/data/SystemServerAnalyzer.kt
++++ b/src/com/axion/diagnostics/data/SystemServerAnalyzer.kt
+@@ -352,9 +352,8 @@ object SystemServerAnalyzer {
+         sb.appendLine("Generated: ${sdf.format(Date())}")
+         sb.appendLine("PID: ${snapshot.pid}")
+         sb.appendLine("Total CPU: %.1f%%".format(snapshot.totalCpuPercent))
+-        sb.appendLine(
+-            "RSS: ${snapshot.totalRssKb / 1024} MB | PSS: ${snapshot.totalPssKb / 1024} MB"
+-        )
++        val pss = if (snapshot.totalPssKb > 0) "${snapshot.totalPssKb / 1024} MB" else "unavailable"
++        sb.appendLine("RSS: ${snapshot.totalRssKb / 1024} MB | PSS: $pss")
+         sb.appendLine("Threads: ${snapshot.totalThreads}")
+         sb.appendLine()
+ 
+diff --git a/src/com/axion/diagnostics/export/ReportExporter.kt b/src/com/axion/diagnostics/export/ReportExporter.kt
+index 7bcbcb0..9834942 100644
+--- a/src/com/axion/diagnostics/export/ReportExporter.kt
++++ b/src/com/axion/diagnostics/export/ReportExporter.kt
+@@ -62,6 +62,7 @@ object ReportExporter {
+         CpuCollector.collect()
+         IoCollector.collect()
+         ProcessCollector.collect(1)
++        SystemServerAnalyzer.collect()
+         Thread.sleep(SAMPLE_WINDOW_MS)
+ 
+         appendHealthSummary(sb, context)
