@@ -31,7 +31,6 @@ apply_patch() {
     fi
 }
 
-apply_patch "system/core" "../../$PATCH_DIR/system_core_drop_schedtune_actions.patch" "libprocessgroup: drop dead schedtune actions (no CONFIG_SCHED_TUNE on this kernel)"
 apply_patch "frameworks/base" "../../$PATCH_DIR/frameworks_base_udfps_ghbm_listener_public.patch" "SystemUI: make UdfpsSurfaceView.GhbmIlluminationListener public (needed cross-package by UdfpsTouchOverlay.kt)"
 apply_patch "packages/apps/AxDiagnostics" "../../../$PATCH_DIR/packages_apps_axdiagnostics_thermal_sanity_bound.patch" "AxDiagnostics: exclude non-temperature/sentinel thermal zones (BCL/ibat, kernel THERMAL_TEMP_INVALID) from maxTemperature/hottest so a bogus reading can't trigger a false Thermal-emergency insight"
 apply_patch "packages/apps/AxionParts" "../../../$PATCH_DIR/packages_apps_axionparts_kernel_manager_performance_profile.patch" "Kernel Manager: add a governor-driven Performance profile picker (one profile per available CPU governor, Custom when the clusters disagree)"
