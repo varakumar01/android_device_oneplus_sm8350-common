@@ -1,40 +1,17 @@
 From: AxionOS <noreply@axionos>
 Subject: [PATCH] SystemUI: long-pressing the Wi-Fi tile opens Wi-Fi settings
 
-WifiTile overrode handleLongClick() to open the Internet dialog and
-returned null from getLongClickIntent(). Drop the override and return
-Settings.ACTION_WIFI_SETTINGS, so QSTileImpl's default long-click starts
-the Wi-Fi settings page, as InternetTileNewImpl already does.
+Two things sent a Wi-Fi tile long-press somewhere else:
+
+* WifiTile overrode handleLongClick() to open the Internet dialog and
+  returned null from getLongClickIntent(). Drop the override and return
+  Settings.ACTION_WIFI_SETTINGS, so QSTileImpl's default long-click
+  starts the Wi-Fi settings page.
+* WifiTileMapper advertised TOGGLE_CLICK, which makes the tile a dual
+  target. The Compose grid sends a long-press on a small dual-target tile
+  to the tile's main click (Tile.kt), and the Wi-Fi tile's main click is
+  the toggle, so the long-press turned Wi-Fi on or off. A tap already
+  toggles Wi-Fi everywhere, so drop TOGGLE_CLICK: long-press then goes to
+  settings for both tile sizes. expandedAccessibilityClass becomes
+  android.widget.Switch so the tile is still reported as an on/off switch.
 ---
-diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt b/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
-index 79425e7..f37a927 100644
---- a/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
-+++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
-@@ -19,6 +19,7 @@ package com.android.systemui.qs.tiles
- import android.content.Intent
- import android.os.Handler
- import android.os.Looper
-+import android.provider.Settings
- import android.service.quicksettings.Tile
- import androidx.lifecycle.Lifecycle
- import androidx.lifecycle.coroutineScope
-@@ -98,11 +99,7 @@ constructor(
-         userActionInteractor.handleClick()
-     }
- 
--    override fun handleLongClick(expandable: Expandable?) {
--        lifecycle.coroutineScope.launch { userActionInteractor.handleLongClick(expandable) }
--    }
--
--    override fun getLongClickIntent(): Intent? = null
-+    override fun getLongClickIntent(): Intent = WIFI_SETTINGS
- 
-     override fun handleUpdateState(state: QSTile.State?, arg: Any?) {
-         val model = arg as? WifiTileModel ?: return
-@@ -131,5 +128,6 @@ constructor(
- 
-     companion object {
-         const val TILE_SPEC = "wifi"
-+        private val WIFI_SETTINGS = Intent(Settings.ACTION_WIFI_SETTINGS)
-     }
- }
