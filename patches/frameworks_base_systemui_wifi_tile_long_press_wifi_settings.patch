@@ -14,4 +14,65 @@ Two things sent a Wi-Fi tile long-press somewhere else:
   toggles Wi-Fi everywhere, so drop TOGGLE_CLICK: long-press then goes to
   settings for both tile sizes. expandedAccessibilityClass becomes
   android.widget.Switch so the tile is still reported as an on/off switch.
----
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt b/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
+index 79425e7..f37a927 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
++++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.kt
+@@ -19,6 +19,7 @@ package com.android.systemui.qs.tiles
+ import android.content.Intent
+ import android.os.Handler
+ import android.os.Looper
++import android.provider.Settings
+ import android.service.quicksettings.Tile
+ import androidx.lifecycle.Lifecycle
+ import androidx.lifecycle.coroutineScope
+@@ -98,11 +99,7 @@ constructor(
+         userActionInteractor.handleClick()
+     }
+ 
+-    override fun handleLongClick(expandable: Expandable?) {
+-        lifecycle.coroutineScope.launch { userActionInteractor.handleLongClick(expandable) }
+-    }
+-
+-    override fun getLongClickIntent(): Intent? = null
++    override fun getLongClickIntent(): Intent = WIFI_SETTINGS
+ 
+     override fun handleUpdateState(state: QSTile.State?, arg: Any?) {
+         val model = arg as? WifiTileModel ?: return
+@@ -131,5 +128,6 @@ constructor(
+ 
+     companion object {
+         const val TILE_SPEC = "wifi"
++        private val WIFI_SETTINGS = Intent(Settings.ACTION_WIFI_SETTINGS)
+     }
+ }
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/ui/mapper/WifiTileMapper.kt b/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/ui/mapper/WifiTileMapper.kt
+index 718cd2c..52bcaa7 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/ui/mapper/WifiTileMapper.kt
++++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/impl/wifi/ui/mapper/WifiTileMapper.kt
+@@ -18,7 +18,7 @@ package com.android.systemui.qs.tiles.impl.wifi.ui.mapper
+ 
+ import android.content.Context
+ import android.content.res.Resources
+-import com.google.android.material.materialswitch.MaterialSwitch
++import android.widget.Switch
+ import com.android.systemui.common.shared.model.Icon
+ import com.android.systemui.qs.tiles.base.shared.model.QSTileConfig
+ import com.android.systemui.qs.tiles.base.shared.model.QSTileState
+@@ -40,7 +40,7 @@ constructor(
+     override fun map(config: QSTileConfig, data: WifiTileModel): QSTileState =
+         QSTileState.build(resources, theme, config.uiConfig) {
+             label = resources.getString(R.string.quick_settings_wifi_label)
+-            expandedAccessibilityClass = MaterialSwitch::class
++            expandedAccessibilityClass = Switch::class
+ 
+             secondaryLabel =
+                 if (data.secondaryLabel != null) {
+@@ -67,7 +67,6 @@ constructor(
+                 setOf(
+                     QSTileState.UserAction.CLICK,
+                     QSTileState.UserAction.LONG_CLICK,
+-                    QSTileState.UserAction.TOGGLE_CLICK,
+                 )
+         }
+ }
