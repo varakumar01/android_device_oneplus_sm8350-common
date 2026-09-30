@@ -430,6 +430,12 @@ DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
 DEVICE_MATRIX_FILE := hardware/qcom-caf/common/compatibility_matrix.xml
 DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/vintf/manifest.xml
 ODM_MANIFEST_FILES := $(LOCAL_PATH)/vintf/manifest_odm.xml
+# NetHunter enables CONFIG_IP6_NF_NAT, CONFIG_NFSD and CONFIG_SYSVIPC, which
+# framework compatibility matrix level 7's kernel requirements (from
+# hardware/interfaces/compatibility_matrices/, via kernel/configs'
+# android-base.config) require to be unset. Disables the build-time kernel
+# FCM check rather than dropping those configs.
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 
 # WiFi
 PRODUCT_PACKAGES += \
