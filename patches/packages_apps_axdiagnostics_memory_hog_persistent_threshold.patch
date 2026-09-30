@@ -1,0 +1,26 @@
+diff --git a/src/com/axion/diagnostics/data/HealthAnalyzer.kt b/src/com/axion/diagnostics/data/HealthAnalyzer.kt
+index dc14259..7e0e032 100644
+--- a/src/com/axion/diagnostics/data/HealthAnalyzer.kt
++++ b/src/com/axion/diagnostics/data/HealthAnalyzer.kt
+@@ -49,6 +49,8 @@ data class HealthReport(
+ 
+ object HealthAnalyzer {
+ 
++    private const val PERSISTENT_OOM_ADJ = -800
++
+     fun analyze(context: Context): HealthReport {
+         val insights = mutableListOf<HealthInsight>()
+ 
+@@ -484,7 +486,11 @@ object HealthAnalyzer {
+             )
+         }
+ 
+-        val memHogs = processes.filter { it.rssKb > 500_000 }
++        // system_server and the other persistent processes (oom_score_adj <= -800) normally hold
++        // 0.5-1 GB, so only flag them well above that.
++        val memHogs = processes.filter {
++            it.rssKb > if (it.oomAdj <= PERSISTENT_OOM_ADJ) 1_500_000 else 500_000
++        }
+         memHogs.forEach { proc ->
+             insights.add(
+                 HealthInsight(
