@@ -1,0 +1,39 @@
+From: AxionOS <noreply@axionos>
+Subject: [PATCH] Settings: don't clip the UDFPS enroll icon at the setup wizard footer
+
+The enroll icon is positioned by topMargin inside layout_container (0dp
+high, bottom of the content area). With the sensor low on the panel
+(bottom > 0.93 * natural display height) it extends below the top edge of
+the setup wizard footer bar, and sud_layout_content, the weighted content
+frame that ends at that edge, clips it, so only the top of the icon shows.
+
+Fix: in adjustFooterButtonForLowUdfps(), after the low-sensor check, call
+setClipChildren(false) on every ViewGroup ancestor of the UdfpsEnrollView.
+The icon keeps its sensor-aligned position.
+---
+diff --git a/src/com/android/settings/biometrics/fingerprint/UdfpsEnrollEnrollingView.java b/src/com/android/settings/biometrics/fingerprint/UdfpsEnrollEnrollingView.java
+index d9f6ba5..c9f24db 100644
+--- a/src/com/android/settings/biometrics/fingerprint/UdfpsEnrollEnrollingView.java
++++ b/src/com/android/settings/biometrics/fingerprint/UdfpsEnrollEnrollingView.java
+@@ -37,6 +37,7 @@ import android.view.LayoutInflater;
+ import android.view.Surface;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.view.ViewParent;
+ import android.view.WindowInsets;
+ import android.view.WindowManager;
+ import android.view.accessibility.AccessibilityManager;
+@@ -317,6 +318,13 @@ public class UdfpsEnrollEnrollingView extends GlifLayout {
+             return;
+         }
+ 
++        // The sensor sits in the footer bar's area. The content frame ends at the footer's top
++        // edge and clips the enroll icon there, so let every ancestor draw outside its bounds.
++        for (ViewParent parent = mUdfpsEnrollView.getParent(); parent instanceof ViewGroup;
++                parent = parent.getParent()) {
++            ((ViewGroup) parent).setClipChildren(false);
++        }
++
+         final FooterBarMixin footerBarMixin = getMixin(FooterBarMixin.class);
+         final LinearLayout buttonContainer = footerBarMixin.getButtonContainer();
+         final Button secondaryButton = footerBarMixin.getSecondaryButtonView();
