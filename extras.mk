@@ -7,8 +7,11 @@ $(call soong_config_set,libcameraservice,ext_lib,//$(LOCAL_PATH):libcameraservic
 # OnePlus OOS Camera
 $(call inherit-product-if-exists, vendor/oplus/camera/opluscamera.mk)
 
-# Dolby 
+# Dolby
 $(call inherit-product, vendor/sony/dolby/sonydolby.mk)
+
+# GhostWire (independent pentest app, pinned at packages/apps/GhostWire)
+$(call inherit-product-if-exists, packages/apps/GhostWire/ghostwire.mk)
 
 # powerhal properties
 PRODUCT_SYSTEM_PROPERTIES += \
