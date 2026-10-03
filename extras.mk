@@ -16,8 +16,8 @@ $(call inherit-product-if-exists, packages/apps/GhostWire/ghostwire.mk)
 # Datura firewall (pinned at packages/apps/Datura-Firewall)
 $(call inherit-product-if-exists, packages/apps/Datura-Firewall/datura.mk)
 
-# Advanced protection settings (pinned at packages/apps/AxPrivacy)
-$(call inherit-product-if-exists, packages/apps/AxPrivacy/axprivacy.mk)
+# Advanced protection settings (pinned at packages/apps/PrivacySettings)
+$(call inherit-product-if-exists, packages/apps/PrivacySettings/privacysettings.mk)
 
 # powerhal properties
 PRODUCT_SYSTEM_PROPERTIES += \
