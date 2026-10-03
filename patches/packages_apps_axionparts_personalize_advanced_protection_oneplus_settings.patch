@@ -1,0 +1,65 @@
+diff --git a/res/values/strings.xml b/res/values/strings.xml
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -33,6 +33,8 @@
+     <string name="nav_performance">Performance</string>
+     <string name="nav_multitasking">Multitasking</string>
+     <string name="personalizations">Personalize</string>
++    <string name="advanced_protection">Advanced protection</string>
++    <string name="oneplus_settings">OnePlus settings</string>
+     
+     <!-- Customize Screen -->
+     <string name="themes">Themes</string>
+diff --git a/src/com/android/axion/axionparts/ui/DashboardScreen.kt b/src/com/android/axion/axionparts/ui/DashboardScreen.kt
+--- a/src/com/android/axion/axionparts/ui/DashboardScreen.kt
++++ b/src/com/android/axion/axionparts/ui/DashboardScreen.kt
+@@ -418,6 +418,49 @@
+                     }
+                 }
+ 
++                item(key = "deviceFeatures") {
++                    Row(
++                        modifier = Modifier.fillMaxWidth().height(featuresHeight).then(revealModifier),
++                        horizontalArrangement = Arrangement.spacedBy(cardSpacing),
++                    ) {
++                        DashboardCard(
++                            title = stringResource(R.string.advanced_protection),
++                            icon = Icons.Filled.Shield,
++                            onClick = {
++                                val intent =
++                                    Intent().apply {
++                                        component =
++                                            ComponentName(
++                                                "org.aox.privacy",
++                                                "org.aox.privacy.PrivacyActivity",
++                                            )
++                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
++                                    }
++                                context.startActivity(intent)
++                            },
++                            modifier = Modifier.weight(1f),
++                        )
++                        DashboardCard(
++                            title = stringResource(R.string.oneplus_settings),
++                            icon = Icons.Filled.Tune,
++                            onClick = {
++                                val intent =
++                                    Intent().apply {
++                                        component =
++                                            ComponentName(
++                                                "org.lineageos.device.DeviceSettings",
++                                                "org.lineageos.device.DeviceSettings.DeviceSettingsActivity",
++                                            )
++                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
++                                    }
++                                context.startActivity(intent)
++                            },
++                            modifier = Modifier.weight(1f),
++                        )
++                        Spacer(modifier = Modifier.weight(1f))
++                    }
++                }
++
+                 item(key = "navigationBars") {
+                     Spacer(
+                         modifier =
