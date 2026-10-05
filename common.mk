@@ -275,6 +275,11 @@ $(call soong_config_set_bool,stagefright,target_disable_thumbnail_block_model,tr
 PRODUCT_PACKAGES += \
     vendor.oplus.hardware.osense.client-service
 
+# Camera scene hints: the osense client libraries load this to pass the
+# provider's OSENSE_ACTION_CAMERA_* requests on to the power HAL.
+PRODUCT_PACKAGES += \
+    liboplus-uah-client
+
 # Overlays
 $(call inherit-product, hardware/oplus/overlay/generic/generic.mk)
 $(call inherit-product, hardware/oplus/overlay/qssi/qssi.mk)
