@@ -275,17 +275,6 @@ $(call soong_config_set_bool,stagefright,target_disable_thumbnail_block_model,tr
 PRODUCT_PACKAGES += \
     vendor.oplus.hardware.osense.client-service
 
-# UAH client
-# OOSCam (libAlgoProcess APSUah::loadUAHLib) and the camera provider dlopen
-# /odm/lib64/liboplus-uah-client.so and look up UahEventAcquire. The stock
-# library cannot be shipped: it needs the urcc-V1-ndk_platform blob, which
-# imports Json::Value::operator=(Json::Value) (only a vendor-bundled
-# libprocessgroup exports it on stock, and it is BIND_NOW), and it only
-# does anything with the root vendor.oplus.hardware.urcc-service running.
-# hardware/oplus ships the upstream no-op stand-in; it was never packaged.
-PRODUCT_PACKAGES += \
-    liboplus-uah-client
-
 # Overlays
 $(call inherit-product, hardware/oplus/overlay/generic/generic.mk)
 $(call inherit-product, hardware/oplus/overlay/qssi/qssi.mk)
