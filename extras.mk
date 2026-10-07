@@ -19,6 +19,9 @@ $(call inherit-product-if-exists, packages/apps/Datura-Firewall/datura.mk)
 # Advanced protection settings (pinned at packages/apps/PrivacySettings)
 $(call inherit-product-if-exists, packages/apps/PrivacySettings/privacysettings.mk)
 
+# Pixel Launcher as the default home (pinned at vendor/pixel-launcher)
+$(call inherit-product-if-exists, vendor/pixel-launcher/pixel-launcher.mk)
+
 # powerhal properties
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.sleep_mode=1 \
