@@ -15,5 +15,29 @@
      limitations under the License.
 -->
 <resources>
-    
+
+    <!-- Whether the panel is driven through a Pixelworks Iris5 chip that can do
+         motion smoothing (MEMC). Shows the Display category and lets
+         IrisMemcService run. -->
+    <bool name="config_irisMemcSupported">false</bool>
+
+    <!-- Video player activities (package/class) MEMC is switched on for while
+         they are on top. Only the class name is compared. -->
+    <string-array name="iris_memc_activities" translatable="false">
+        <item>com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity</item>
+        <item>com.google.android.youtube/com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity</item>
+        <item>com.google.android.youtube/com.google.android.apps.youtube.app.watchwhile.MainActivity</item>
+        <item>com.netflix.mediaclient/com.netflix.mediaclient.ui.player.PlayerActivity</item>
+        <item>com.amazon.avod.thirdpartyclient/com.amazon.avod.thirdpartyclient.ThirdPartyPlaybackActivity</item>
+        <item>in.startv.hotstar/in.startv.hotstar.rocky.watchpage.HSWatchPageActivity</item>
+        <item>in.startv.hotstaronly/in.startv.hotstar.rocky.detailpage.HSDetailPageActivity</item>
+        <item>org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity</item>
+        <item>com.mxtech.videoplayer.ad/com.mxtech.videoplayer.ad.ActivityScreen</item>
+        <item>com.mxtech.videoplayer.pro/com.mxtech.videoplayer.pro.ActivityScreen</item>
+        <item>tv.danmaku.bili/tv.danmaku.bili.ui.video.VideoDetailsActivity</item>
+        <item>tv.danmaku.bili/com.bilibili.video.videodetail.VideoDetailsActivity</item>
+        <item>com.bilibili.app.in/com.bilibili.video.videodetail.VideoDetailsActivity</item>
+        <item>com.iqiyi.i18n/org.iqiyi.video.activity.PlayerActivity</item>
+    </string-array>
+
 </resources>

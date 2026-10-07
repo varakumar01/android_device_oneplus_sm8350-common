@@ -21,6 +21,8 @@ import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.UserHandle;
 import android.os.Vibrator;
 import android.text.TextUtils;
@@ -36,6 +38,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import android.util.ArrayMap;
 import java.util.Map;
 import org.lineageos.internal.util.FileUtils;
+import org.lineageos.device.DeviceSettings.iris.IrisMemcService;
 
 public class DeviceSettings extends SettingsBasePreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -67,6 +70,18 @@ public class DeviceSettings extends SettingsBasePreferenceFragment
         setPreferencesFromResource(R.xml.main, rootKey);
 
         mVibrator = getContext().getSystemService(Vibrator.class);
+
+        Preference irisCategory = findPreference("iris");
+        if (!IrisMemcService.isSupported(getContext())) {
+            getPreferenceScreen().removePreference(irisCategory);
+        } else {
+            findPreference(IrisMemcService.KEY_MEMC).setOnPreferenceChangeListener((pref, value) -> {
+                // The new value is stored after this returns.
+                Context context = getContext().getApplicationContext();
+                new Handler(Looper.getMainLooper()).post(() -> IrisMemcService.sync(context));
+                return true;
+            });
+        }
         
         mGameModeSwitch = bindSwitchPref(KEY_GAME_SWITCH, FILE_GAME);
         mEdgeTouchSwitch = bindSwitchPref(KEY_EDGE_TOUCH, FILE_EDGE);

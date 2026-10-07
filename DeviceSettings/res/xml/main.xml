@@ -21,6 +21,17 @@
     
 
     <PreferenceCategory
+        android:key="iris"
+        android:title="@string/iris_title">
+
+        <SwitchPreferenceCompat
+            android:key="iris_memc"
+            android:defaultValue="false"
+            android:summary="@string/iris_memc_summary"
+            android:title="@string/iris_memc_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="touchpanel"
         android:title="@string/touchpanel_title">
 

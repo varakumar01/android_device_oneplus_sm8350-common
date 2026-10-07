@@ -86,6 +86,12 @@
         <!-- PowerTools (activity, QS tile service, boot receiver, widget,
              GameSpace sync) is excluded from this build entirely. -->
 
+        <!-- Pixelworks Iris5 motion smoothing (devices with
+             config_irisMemcSupported only) -->
+        <service
+            android:name=".iris.IrisMemcService"
+            android:exported="false" />
+
         <!-- Selective Band Lock sub-screen -->
         <activity
             android:name=".network.NetworkBandsActivity"

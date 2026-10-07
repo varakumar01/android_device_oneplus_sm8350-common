@@ -19,6 +19,11 @@
     <string name="device_title">OnePlus Settings</string>
     <string name="device_summary">Adjust OnePlus specific device settings</string>
 
+    <!-- Display (Pixelworks Iris5) -->
+    <string name="iris_title">Display</string>
+    <string name="iris_memc_title">Motion smoothing</string>
+    <string name="iris_memc_summary">Add frames to video in supported player apps so motion looks smoother. Uses more battery; off in battery saver</string>
+
     <!-- Vibration control -->
     <string name="category_vibrator">Vibrator</string>
     <string name="vib_strength_title_head">Strength</string>
