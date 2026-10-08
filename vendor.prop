@@ -201,5 +201,3 @@ vendor.usb.use_gadget_hal=1
 
 # WiFi
 wifi.aware.interface=wifi-aware0
-persist.data.iwlan=1
-persist.data.iwlan.ipsec.ap=1
