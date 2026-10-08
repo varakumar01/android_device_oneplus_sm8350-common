@@ -328,26 +328,28 @@ vendor/gpu/kbc/unified_ksqs.bin
 vendor/lib64/egl/eglSubDriverAndroid.so
 vendor/lib64/egl/libEGL_adreno.so;SYMLINK=vendor/lib64/libEGL_adreno.so
 vendor/lib64/egl/libGLESv1_CM_adreno.so
-vendor/lib64/egl/libGLESv2_adreno.so;SYMLINK=vendor/lib64/libGLESv2_adreno.so
 vendor/lib64/egl/libq3dtools_adreno.so;SYMLINK=vendor/lib64/libq3dtools_adreno.so
-vendor/lib64/egl/libq3dtools_esx.so
 vendor/lib64/libC2D2.so
-vendor/lib64/libCB.so
 vendor/lib64/libOpenCL.so
 vendor/lib64/libVkLayer_q3dtools.so
 vendor/lib64/libadreno_app_profiles.so
-vendor/lib64/libadreno_utils.so
-vendor/lib64/libc2d30_bltlib.so
 vendor/lib64/libgpudataproducer.so
-vendor/lib64/libgsl.so
 vendor/lib64/libkcl.so
 vendor/lib64/libkernelmanager.so
-vendor/lib64/libllvm-glnext.so
 vendor/lib64/libllvm-qcom.so
 vendor/lib64/vendor.qti.qspmhal@1.0.so
 
-# Graphics (Vulkan)
-vendor/lib64/hw/vulkan.adreno.so
+# Graphics (Adreno) - from Xiaomi redwood (OS2.0.17.0.UMSMIXM)
+vendor/lib64/egl/libGLESv2_adreno.so;SYMLINK=vendor/lib64/libGLESv2_adreno.so|a6f71c95b1d983f4802693911929e5bf021ee69f
+vendor/lib64/egl/libq3dtools_esx.so|48cfaa1d526e2c23372a73120cfadef640da325a
+vendor/lib64/libadreno_utils.so|ba4f51ee464cb4cb458ad0d04dca21513b637960
+vendor/lib64/libc2d30_bltlib.so|e330210916d482cdbf6fe942145a664679fa9c88
+vendor/lib64/libCB.so|7d503f8b3618ee3337f96a5af4757eccbf8fadf8
+vendor/lib64/libgsl.so|53074f803dded4e6db33c413e68ee18ada8c5952
+vendor/lib64/libllvm-glnext.so|95f645b8a33d4928b5e9e94bda1ef8977c8b2314
+
+# Graphics (Vulkan) - from Xiaomi redwood (OS2.0.17.0.UMSMIXM)
+vendor/lib64/hw/vulkan.adreno.so|a425c0aa632264fb582b654413522ccee105afe9
 
 # GNSS
 odm/etc/izat.conf
