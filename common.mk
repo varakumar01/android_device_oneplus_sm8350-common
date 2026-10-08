@@ -442,6 +442,10 @@ ODM_MANIFEST_FILES := $(LOCAL_PATH)/vintf/manifest_odm.xml
 # FCM check rather than dropping those configs.
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 
+# Wallpaper
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/wallpapers/default_wallpaper.jpg:$(TARGET_COPY_OUT_PRODUCT)/media/wallpaper/default_wallpaper.jpg
+
 # WiFi
 PRODUCT_PACKAGES += \
     android.hardware.wifi-service \
