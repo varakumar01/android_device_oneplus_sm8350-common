@@ -13,3 +13,6 @@ ro.opa.device_model_id=ga-oplus-skill-os121-211011
 
 # OTA
 lineage.updater.uri=https://raw.githubusercontent.com/varakumar01/scripts/aox/OTA/{variant}/{device}.json
+
+# Wallpaper
+ro.config.wallpaper=/product/media/wallpaper/default_wallpaper.jpg
