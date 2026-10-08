@@ -20,13 +20,17 @@ $(call inherit-product-if-exists, packages/apps/Datura-Firewall/datura.mk)
 $(call inherit-product-if-exists, packages/apps/PrivacySettings/privacysettings.mk)
 
 # Prebuilt apps fetched by scripts/track_changes.sh into prebuilt-apps/
-# (Brave stable, KernelSU-Next manager). Each is added only when its APK is
+# (Brave stable, KernelSU-Next manager), shipped in /product/preinstall and
+# installed as user apps on first boot. Each is added only when its APK is
 # present; the modules themselves live in prebuilt-apps/Android.mk.
+PRODUCT_PACKAGES += \
+    axion_preinstall.rc \
+    axion_preinstall.sh
 ifneq ($(wildcard $(LOCAL_PATH)/prebuilt-apps/Brave.apk),)
-PRODUCT_PACKAGES += Brave
+PRODUCT_PACKAGES += BravePreinstall
 endif
 ifneq ($(wildcard $(LOCAL_PATH)/prebuilt-apps/KSUNManager.apk),)
-PRODUCT_PACKAGES += KSUNManager
+PRODUCT_PACKAGES += KSUNManagerPreinstall
 endif
 
 # powerhal properties
