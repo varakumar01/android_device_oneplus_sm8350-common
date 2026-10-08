@@ -45,6 +45,7 @@ public final class Startup extends BroadcastReceiver {
             try {
                 DeviceSettings.restoreFastChargeSetting(context);
                 DeviceSettings.restoreVibStrengthSetting(context);
+                DeviceSettings.restoreVideoEnhance(context);
                 org.lineageos.device.DeviceSettings.iris.IrisMemcService.sync(context);
                 org.lineageos.device.DeviceSettings.network.NetworkBandsFragment.restoreNrModeSettings(context);
             } catch (Exception e) {
