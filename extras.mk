@@ -19,6 +19,16 @@ $(call inherit-product-if-exists, packages/apps/Datura-Firewall/datura.mk)
 # Advanced protection settings (pinned at packages/apps/PrivacySettings)
 $(call inherit-product-if-exists, packages/apps/PrivacySettings/privacysettings.mk)
 
+# Prebuilt apps fetched by scripts/track_changes.sh into prebuilt-apps/
+# (Brave stable, KernelSU-Next manager). Each is added only when its APK is
+# present; the modules themselves live in prebuilt-apps/Android.mk.
+ifneq ($(wildcard $(LOCAL_PATH)/prebuilt-apps/Brave.apk),)
+PRODUCT_PACKAGES += Brave
+endif
+ifneq ($(wildcard $(LOCAL_PATH)/prebuilt-apps/KSUNManager.apk),)
+PRODUCT_PACKAGES += KSUNManager
+endif
+
 # powerhal properties
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.sleep_mode=1 \

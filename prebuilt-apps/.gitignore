@@ -1,0 +1,3 @@
+# APKs are fetched at sync time by scripts/track_changes.sh, never committed.
+*.apk
+*.apk.version
