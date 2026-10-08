@@ -325,31 +325,34 @@ vendor/gpu/kbc/sequence_manifest.bin
 vendor/gpu/kbc/unified_kbcs_32.bin
 vendor/gpu/kbc/unified_kbcs_64.bin
 vendor/gpu/kbc/unified_ksqs.bin
-vendor/lib64/egl/eglSubDriverAndroid.so
-vendor/lib64/egl/libEGL_adreno.so;SYMLINK=vendor/lib64/libEGL_adreno.so
-vendor/lib64/egl/libGLESv1_CM_adreno.so
-vendor/lib64/egl/libq3dtools_adreno.so;SYMLINK=vendor/lib64/libq3dtools_adreno.so
 vendor/lib64/libC2D2.so
-vendor/lib64/libOpenCL.so
 vendor/lib64/libVkLayer_q3dtools.so
-vendor/lib64/libadreno_app_profiles.so
-vendor/lib64/libgpudataproducer.so
-vendor/lib64/libkcl.so
 vendor/lib64/libkernelmanager.so
-vendor/lib64/libllvm-qcom.so
 vendor/lib64/vendor.qti.qspmhal@1.0.so
 
 # Graphics (Adreno) - from Xiaomi redwood (OS2.0.17.0.UMSMIXM)
-vendor/lib64/egl/libGLESv2_adreno.so;SYMLINK=vendor/lib64/libGLESv2_adreno.so|a6f71c95b1d983f4802693911929e5bf021ee69f
-vendor/lib64/egl/libq3dtools_esx.so|48cfaa1d526e2c23372a73120cfadef640da325a
-vendor/lib64/libadreno_utils.so|ba4f51ee464cb4cb458ad0d04dca21513b637960
 vendor/lib64/libc2d30_bltlib.so|e330210916d482cdbf6fe942145a664679fa9c88
-vendor/lib64/libCB.so|7d503f8b3618ee3337f96a5af4757eccbf8fadf8
-vendor/lib64/libgsl.so|53074f803dded4e6db33c413e68ee18ada8c5952
-vendor/lib64/libllvm-glnext.so|95f645b8a33d4928b5e9e94bda1ef8977c8b2314
 
-# Graphics (Vulkan) - from Xiaomi redwood (OS2.0.17.0.UMSMIXM)
-vendor/lib64/hw/vulkan.adreno.so|a425c0aa632264fb582b654413522ccee105afe9
+# Graphics (Adreno) - from Motorola sm8475 (V@0615.98)
+vendor/lib64/egl/eglSubDriverAndroid.so|21a3366b1c72b557bb5183c32e10196f42ac658f
+vendor/lib64/egl/libEGL_adreno.so;SYMLINK=vendor/lib64/libEGL_adreno.so|a605a804d2397f0efc3dfbedf5c613b60e58f2d6
+vendor/lib64/egl/libGLESv1_CM_adreno.so|46dbe1e3fc54604d308d18c53f20cc0bc4710641
+vendor/lib64/egl/libGLESv2_adreno.so;SYMLINK=vendor/lib64/libGLESv2_adreno.so|9d46c8687562f4cfe4c405786b53eaab9bf8440d
+vendor/lib64/egl/libq3dtools_adreno.so;SYMLINK=vendor/lib64/libq3dtools_adreno.so|7b1bca9132cb906613aac175b2fa9cc3eda3a55f
+vendor/lib64/egl/libq3dtools_esx.so|f980af11852dbbc39fe17d03e5202436e8d1dc10
+vendor/lib64/libCB.so|afe3af96332de41f7d60f5ddef9d51c43efc20a3
+vendor/lib64/libOpenCL.so|454b8aaada3a5c449ae90e2232eb761e743fda06
+vendor/lib64/libadreno_app_profiles.so|3e14e8c417de3eb32e9ba507cd8979605a27313b
+vendor/lib64/libadreno_utils.so|3de7b8292ff210082245705a78162a830088f954
+vendor/lib64/libgpudataproducer.so|f857819043f6896817936d8faaba4cc13d455922
+vendor/lib64/libgsl.so|a121c64b3b846cbb2087b9dcb20501c061ad4913
+vendor/lib64/libkcl.so|e84e8ae3f3450bdba445f38ff20e70ab891b1333
+vendor/lib64/libllvm-glnext.so|0cdc328f713ac730a6e16d165dfa0613d56ea50b
+vendor/lib64/libllvm-qcom.so|210fdef3513ca2dc022e54b50779c0024a6c6730
+vendor/lib64/libllvm-qgl.so|e69efa7df591d13591fc19e0130a0d1f5cce5b9e
+
+# Graphics (Vulkan) - from Motorola sm8475 (V@0615.98)
+vendor/lib64/hw/vulkan.adreno.so|bbd6a2e24481aab2521edffefc9ef1d1d241c2fe
 
 # GNSS
 odm/etc/izat.conf
