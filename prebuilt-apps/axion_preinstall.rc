@@ -1,0 +1,11 @@
+# Runs as the shell user in the shell domain, the same identity "adb install"
+# uses, so it needs no sepolicy of its own.
+service axion_preinstall /system/bin/sh /product/preinstall/axion_preinstall.sh
+    user shell
+    group shell
+    seclabel u:r:shell:s0
+    disabled
+    oneshot
+
+on property:sys.boot_completed=1
+    start axion_preinstall
