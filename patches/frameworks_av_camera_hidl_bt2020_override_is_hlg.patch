@@ -1,0 +1,17 @@
+--- a/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp
++++ b/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp
+@@ -1165,6 +1165,14 @@
+         Camera3Stream* dstStream = Camera3Stream::cast(dst);
+         int overrideFormat = mapToFrameworkFormat(src.v3_2.overrideFormat);
+         android_dataspace overrideDataSpace = mapToFrameworkDataspace(src.overrideDataSpace);
++        // The OPLUS SM8350 HAL answers an HDR video stream with the BT.2020 standard alone
++        // (0x60000): no transfer, no range. It marks the buffers themselves BT.2020 / HLG /
++        // limited in the gralloc colour metadata, which the encoder does not read, so the
++        // recording came out with primaries and matrix but no transfer characteristic.
++        if (overrideDataSpace == HAL_DATASPACE_STANDARD_BT2020) {
++            overrideDataSpace = static_cast<android_dataspace>(HAL_DATASPACE_STANDARD_BT2020 |
++                    HAL_DATASPACE_TRANSFER_HLG | HAL_DATASPACE_RANGE_LIMITED);
++        }
+ 
+         if (mHidlSession_3_6 != nullptr) {
+             dstStream->setOfflineProcessingSupport(src_36.supportOffline);
