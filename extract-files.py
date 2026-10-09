@@ -38,7 +38,6 @@ lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     (
         'com.qualcomm.qti.dpm.api@1.0',
-        'libmmosal',
         'vendor.qti.diaghal@1.0',
         'vendor.qti.hardware.wifidisplaysession@1.0',
         'vendor.qti.imsrtpservice@3.0',
@@ -62,11 +61,17 @@ blob_fixups: blob_fixups_user_type = {
         .regex_replace('"max_retry_alloc_output_timeout": 1000,', '"max_retry_alloc_output_timeout": 0,'),
     'vendor/etc/msm_irqbalance.conf': blob_fixup()
         .regex_replace('IGNORED_IRQ=27,23,38$', 'IGNORED_IRQ=27,23,38,115,332'),
+    'vendor/etc/seccomp_policy/codec2.vendor.ext-arm64.policy': blob_fixup()
+        .add_line_if_missing('setsockopt: 1')
+        .add_line_if_missing('uname: 1'),
     (
         'vendor/lib64/libdpps.so',
         'vendor/lib64/libsnapdragoncolor-manager.so',
     ): blob_fixup()
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
+    'vendor/lib64/libqcodec2_v4l2codec.so': blob_fixup()
+        .sig_replace('C8 02 08 EB E3 8C 00 54', 'C8 02 08 EB 1F 20 03 D5')
+        .sig_replace('C9 02 0A EB 43 86 00 54', 'C9 02 0A EB 1F 20 03 D5'),
 }  # fmt: skip
 
 module = ExtractUtilsModule(
