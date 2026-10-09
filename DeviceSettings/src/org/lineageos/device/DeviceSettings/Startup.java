@@ -18,7 +18,9 @@ package org.lineageos.device.DeviceSettings;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.concurrent.ExecutorService;
@@ -32,6 +34,22 @@ public final class Startup extends BroadcastReceiver {
             "lineageos.intent.action.INITIALIZE_LINEAGE_HARDWARE";
 
     private static final ExecutorService sExecutor = Executors.newSingleThreadExecutor();
+
+    // OplusCamera's COUI widgets draw their blur and stroke effects only when
+    // these two system settings are 1; nothing else on this ROM creates them.
+    private static final String[] MATERIAL_EFFECT_SETTINGS = {
+            "system_material_blur_enable",
+            "system_material_stroke_enable",
+    };
+
+    private static void initMaterialEffectSettings(Context context) {
+        final ContentResolver resolver = context.getContentResolver();
+        for (String key : MATERIAL_EFFECT_SETTINGS) {
+            if (Settings.System.getString(resolver, key) == null) {
+                Settings.System.putInt(resolver, key, 1);
+            }
+        }
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -48,6 +66,7 @@ public final class Startup extends BroadcastReceiver {
                 DeviceSettings.restoreVideoEnhance(context);
                 org.lineageos.device.DeviceSettings.iris.IrisMemcService.sync(context);
                 org.lineageos.device.DeviceSettings.network.NetworkBandsFragment.restoreNrModeSettings(context);
+                initMaterialEffectSettings(context);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to restore hardware settings during startup", e);
             } finally {
