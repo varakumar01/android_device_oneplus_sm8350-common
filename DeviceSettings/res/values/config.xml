@@ -47,6 +47,9 @@
         <item>com.stremio.one/com.stremio.MainActivity</item>
         <item>com.sonyliv/com.sonyliv.ui.home.HomeActivity</item>
         <item>com.graymatrix.did/com.zee5.MainActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.crunchyroll.watchscreen.screen.WatchScreenActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.crunchyroll.watchscreen.screen.offline.OfflineWatchScreenActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.crunchyroll.music.watch.screen.WatchMusicActivity</item>
         <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.watchpage.v2.WatchPageActivity</item>
         <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.watchpage.v2.OfflineWatchPageActivity</item>
         <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.content.WatchPageActivity</item>
