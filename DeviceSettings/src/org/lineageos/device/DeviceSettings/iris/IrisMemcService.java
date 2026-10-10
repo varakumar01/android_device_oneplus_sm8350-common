@@ -66,6 +66,7 @@ public class IrisMemcService extends Service {
     private IIris mIris;
     // The HDR formal type the chip was last set to, HDR_FORMAL_NONE in bypass.
     private int mFormal = HDR_FORMAL_NONE;
+    private String mLastTop;
 
     public static boolean isSupported(Context context) {
         return context.getResources().getBoolean(R.bool.config_irisMemcSupported);
@@ -165,12 +166,18 @@ public class IrisMemcService extends Service {
             ActivityTaskManager.RootTaskInfo info =
                     ActivityTaskManager.getService().getFocusedRootTaskInfo();
             ComponentName top = info != null ? info.topActivity : null;
-            if (top == null || !(mActivities.contains(top.getClassName())
+            int formal = HDR_FORMAL_NONE;
+            if (top != null && (mActivities.contains(top.getClassName())
                     || mActivities.contains(top.getPackageName()))) {
-                return HDR_FORMAL_NONE;
+                formal = PACKAGE_NETFLIX.equals(top.getPackageName())
+                        ? HDR_FORMAL_NETFLIX : HDR_FORMAL_MEMC;
             }
-            return PACKAGE_NETFLIX.equals(top.getPackageName())
-                    ? HDR_FORMAL_NETFLIX : HDR_FORMAL_MEMC;
+            String name = top != null ? top.flattenToShortString() : "none";
+            if (!name.equals(mLastTop)) {
+                Log.d(TAG, "top activity " + name + ", HDR formal " + formal);
+                mLastTop = name;
+            }
+            return formal;
         } catch (Exception e) {
             Log.e(TAG, "Failed to get the top activity", e);
             return HDR_FORMAL_NONE;
