@@ -40,6 +40,19 @@
         <item>tv.danmaku.bili/com.bilibili.video.videodetail.VideoDetailsActivity</item>
         <item>com.bilibili.app.in/com.bilibili.video.videodetail.VideoDetailsActivity</item>
         <item>com.iqiyi.i18n/org.iqiyi.video.activity.PlayerActivity</item>
+        <item>com.disney.disneyplus/com.bamtechmedia.dominguez.player.ui.playback.PlaybackActivity</item>
+        <item>com.wbd.stream/com.wbd.beam.BeamActivity</item>
+        <item>tv.twitch.android.app</item>
+        <item>com.stremio.one/com.stremio.MainActivity</item>
+        <item>com.sonyliv/com.sonyliv.ui.home.HomeActivity</item>
+        <item>com.graymatrix.did/com.zee5.MainActivity</item>
+        <item>com.crunchyroll.crunchyroid</item>
+        <item>com.plexapp.android</item>
+        <item>org.lineageos.glimpse/org.lineageos.glimpse.ViewActivity</item>
+        <item>com.brouken.player/com.brouken.player.PlayerActivity</item>
+        <item>dev.jdtech.jellyfin/dev.jdtech.jellyfin.PlayerActivity</item>
+        <item>org.jellyfin.mobile/org.jellyfin.mobile.MainActivity</item>
+        <item>org.schabi.newpipe/org.schabi.newpipe.MainActivity</item>
     </string-array>
 
 </resources>
