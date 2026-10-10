@@ -20,6 +20,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.ArraySet;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import vendor.pixelworks.hardware.display.V1_0.IIris;
+import vendor.pixelworks.hardware.display.V1_0.IIrisCallback;
 
 /**
  * Motion smoothing (MEMC) on the Pixelworks Iris5 chip.
@@ -44,6 +46,10 @@ public class IrisMemcService extends Service {
     private static final String TAG = "IrisMemcService";
 
     public static final String KEY_MEMC = "iris_memc";
+    private static final String KEY_MEMC_TOAST = "iris_memc_toast";
+
+    // Identifies this client to the HAL, same value as the Nameless client.
+    private static final long CALLBACK_ID = -2138930830L;
 
     // irisConfigureSet() types and values, see
     // hardware/pixelworks/interfaces (VendorConfig, HdrFormalType) and the
@@ -67,6 +73,16 @@ public class IrisMemcService extends Service {
     // The HDR formal type the chip was last set to, HDR_FORMAL_NONE in bypass.
     private int mFormal = HDR_FORMAL_NONE;
     private String mLastTop;
+
+    // The HAL calls this when it starts MEMC on a video, which is some
+    // seconds after it was asked to and only if it accepts the video.
+    private final IIrisCallback mCallback = new IIrisCallback.Stub() {
+        @Override
+        public void onFeatureChanged(int type, ArrayList<Integer> values) {
+            Log.d(TAG, "onFeatureChanged(" + type + ", " + values + ")");
+            mHandler.post(() -> showToast());
+        }
+    };
 
     public static boolean isSupported(Context context) {
         return context.getResources().getBoolean(R.bool.config_irisMemcSupported);
@@ -203,6 +219,16 @@ public class IrisMemcService extends Service {
         }
     }
 
+    /** Tells the user that MEMC has started. */
+    private void showToast() {
+        if (mFormal == HDR_FORMAL_NONE || !PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(KEY_MEMC_TOAST, true)) {
+            return;
+        }
+        getMainExecutor().execute(() ->
+                Toast.makeText(this, R.string.iris_memc_started, Toast.LENGTH_SHORT).show());
+    }
+
     private boolean configure(int type, int... values) {
         ArrayList<Integer> list = new ArrayList<>(values.length);
         for (int value : values) {
@@ -211,6 +237,7 @@ public class IrisMemcService extends Service {
         try {
             if (mIris == null) {
                 mIris = IIris.getService(true);
+                mIris.registerCallback2(CALLBACK_ID, mCallback);
             }
             int status = mIris.irisConfigureSet(type, list);
             Log.d(TAG, "irisConfigureSet(" + type + ", " + list + ") = " + status);
