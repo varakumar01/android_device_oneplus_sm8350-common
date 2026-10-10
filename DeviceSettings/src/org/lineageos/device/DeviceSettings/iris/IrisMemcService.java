@@ -208,6 +208,10 @@ public class IrisMemcService extends Service {
         if (formal != HDR_FORMAL_NONE) {
             ok = configure(TYPE_ANALOG_BYPASS, 0)
                     && configure(TYPE_HDR_FORMAL, formal, 0, 0);
+            if (!ok) {
+                // Do not leave the chip out of bypass with no mode selected.
+                configure(TYPE_ANALOG_BYPASS, 1);
+            }
         } else {
             ok = configure(TYPE_HDR_FORMAL, HDR_FORMAL_NONE)
                     && configure(TYPE_ANALOG_BYPASS, 1);
