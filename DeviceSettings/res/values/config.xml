@@ -42,12 +42,16 @@
         <item>com.iqiyi.i18n/org.iqiyi.video.activity.PlayerActivity</item>
         <item>com.disney.disneyplus/com.bamtechmedia.dominguez.player.ui.playback.PlaybackActivity</item>
         <item>com.wbd.stream/com.wbd.beam.BeamActivity</item>
-        <item>tv.twitch.android.app</item>
+        <item>tv.twitch.android.app/tv.twitch.android.feature.viewer.landing.ViewerLandingActivity</item>
+        <item>tv.twitch.android.app/tv.twitch.starshot64.app.StarshotActivity</item>
         <item>com.stremio.one/com.stremio.MainActivity</item>
         <item>com.sonyliv/com.sonyliv.ui.home.HomeActivity</item>
         <item>com.graymatrix.did/com.zee5.MainActivity</item>
-        <item>com.crunchyroll.crunchyroid</item>
-        <item>com.plexapp.android</item>
+        <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.watchpage.v2.WatchPageActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.watchpage.v2.OfflineWatchPageActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.content.WatchPageActivity</item>
+        <item>com.crunchyroll.crunchyroid/com.ellation.crunchyroll.presentation.content.OfflineWatchPageActivity</item>
+        <item>com.plexapp.android/com.plexapp.player.PlayerActivity</item>
         <item>org.lineageos.glimpse/org.lineageos.glimpse.ViewActivity</item>
         <item>com.brouken.player/com.brouken.player.PlayerActivity</item>
         <item>dev.jdtech.jellyfin/dev.jdtech.jellyfin.PlayerActivity</item>
