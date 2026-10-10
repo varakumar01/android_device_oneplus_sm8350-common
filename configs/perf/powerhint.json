@@ -196,6 +196,7 @@
       "Path": "/dev/cpuctl/top-app/cpu.uclamp.min",
       "Values": [
         "0",
+        "60",
         "20",
         "35"
       ],
@@ -404,6 +405,12 @@
       "PowerHint": "CAMERA_STREAMING_MID",
       "Node": "sysClassDevfreqSoc:qcomCpu0CpuLlccLatMemLatencyRatioCeil",
       "Value": "200",
+      "Duration": 0
+    },
+    {
+      "PowerHint": "CAMERA_STREAMING_HIGH",
+      "Node": "devCpuctlTopAppCpuUclampMin",
+      "Value": "60",
       "Duration": 0
     },
     {
