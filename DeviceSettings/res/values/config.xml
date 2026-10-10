@@ -33,6 +33,7 @@
         <item>in.startv.hotstar/in.startv.hotstar.rocky.watchpage.HSWatchPageActivity</item>
         <item>in.startv.hotstaronly/in.startv.hotstar.rocky.detailpage.HSDetailPageActivity</item>
         <item>org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity</item>
+        <item>dev.anilbeesetti.nextplayer/dev.anilbeesetti.nextplayer.feature.player.PlayerActivity</item>
         <item>com.mxtech.videoplayer.ad/com.mxtech.videoplayer.ad.ActivityScreen</item>
         <item>com.mxtech.videoplayer.pro/com.mxtech.videoplayer.pro.ActivityScreen</item>
         <item>tv.danmaku.bili/tv.danmaku.bili.ui.video.VideoDetailsActivity</item>
