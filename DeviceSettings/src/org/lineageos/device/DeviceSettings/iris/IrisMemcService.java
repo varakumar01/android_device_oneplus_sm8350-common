@@ -34,8 +34,8 @@ import vendor.pixelworks.hardware.display.V1_0.IIris;
  * Motion smoothing (MEMC) on the Pixelworks Iris5 chip.
  *
  * The chip sits in analog bypass until it is told otherwise. While one of the
- * video player activities in R.array.iris_memc_activities is on top, this
- * service takes it out of bypass and selects the MEMC mode through the Iris
+ * video player activities or packages in R.array.iris_memc_activities is on
+ * top, this service takes it out of bypass and selects the MEMC mode through the Iris
  * HAL; when the activity leaves, the screen turns off or battery saver comes
  * on, it puts the chip back in bypass.
  */
@@ -52,6 +52,10 @@ public class IrisMemcService extends Service {
     private static final int TYPE_HDR_FORMAL = 258;
     private static final int HDR_FORMAL_NONE = 0;
     private static final int HDR_FORMAL_MEMC = 10;
+    // MEMC for Netflix: the HAL enters MEMC itself once playback has started.
+    private static final int HDR_FORMAL_NETFLIX = 74;
+
+    private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
 
     // Wait for the activity transition to end before switching the chip.
     private static final long ENTER_DELAY_MS = 600;
@@ -60,7 +64,8 @@ public class IrisMemcService extends Service {
     private HandlerThread mThread;
     private Handler mHandler;
     private IIris mIris;
-    private boolean mInMemc;
+    // The HDR formal type the chip was last set to, HDR_FORMAL_NONE in bypass.
+    private int mFormal = HDR_FORMAL_NONE;
 
     public static boolean isSupported(Context context) {
         return context.getResources().getBoolean(R.bool.config_irisMemcSupported);
@@ -128,7 +133,7 @@ public class IrisMemcService extends Service {
         }
         unregisterReceiver(mReceiver);
         mHandler.removeCallbacksAndMessages(null);
-        mHandler.post(() -> setMemc(false));
+        mHandler.post(() -> setMemc(HDR_FORMAL_NONE));
         mThread.quitSafely();
         super.onDestroy();
     }
@@ -148,39 +153,46 @@ public class IrisMemcService extends Service {
         mHandler.postDelayed(mUpdate, delayMs);
     }
 
-    private final Runnable mUpdate = () -> setMemc(wantMemc());
+    private final Runnable mUpdate = () -> setMemc(wantedFormal());
 
-    private boolean wantMemc() {
+    /** The HDR formal type the top activity should get. */
+    private int wantedFormal() {
         PowerManager pm = getSystemService(PowerManager.class);
         if (!pm.isInteractive() || pm.isPowerSaveMode()) {
-            return false;
+            return HDR_FORMAL_NONE;
         }
         try {
             ActivityTaskManager.RootTaskInfo info =
                     ActivityTaskManager.getService().getFocusedRootTaskInfo();
             ComponentName top = info != null ? info.topActivity : null;
-            return top != null && mActivities.contains(top.getClassName());
+            if (top == null || !(mActivities.contains(top.getClassName())
+                    || mActivities.contains(top.getPackageName()))) {
+                return HDR_FORMAL_NONE;
+            }
+            return PACKAGE_NETFLIX.equals(top.getPackageName())
+                    ? HDR_FORMAL_NETFLIX : HDR_FORMAL_MEMC;
         } catch (Exception e) {
             Log.e(TAG, "Failed to get the top activity", e);
-            return false;
+            return HDR_FORMAL_NONE;
         }
     }
 
-    private void setMemc(boolean enable) {
-        if (enable == mInMemc) {
+    private void setMemc(int formal) {
+        if (formal == mFormal) {
             return;
         }
         boolean ok;
-        if (enable) {
+        if (formal != HDR_FORMAL_NONE) {
             ok = configure(TYPE_ANALOG_BYPASS, 0)
-                    && configure(TYPE_HDR_FORMAL, HDR_FORMAL_MEMC, 0, 0);
+                    && configure(TYPE_HDR_FORMAL, formal, 0, 0);
         } else {
             ok = configure(TYPE_HDR_FORMAL, HDR_FORMAL_NONE)
                     && configure(TYPE_ANALOG_BYPASS, 1);
         }
-        Log.i(TAG, "MEMC " + (enable ? "on" : "off") + (ok ? "" : " failed"));
+        Log.i(TAG, "MEMC " + (formal != HDR_FORMAL_NONE ? "on" : "off")
+                + (ok ? "" : " failed"));
         if (ok) {
-            mInMemc = enable;
+            mFormal = formal;
         }
     }
 

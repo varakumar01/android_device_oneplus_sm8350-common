@@ -22,12 +22,13 @@
     <bool name="config_irisMemcSupported">false</bool>
 
     <!-- Video player activities (package/class) MEMC is switched on for while
-         they are on top. Only the class name is compared. -->
+         they are on top. Only the class name is compared. An item without a
+         class is a package and matches all of its activities. -->
     <string-array name="iris_memc_activities" translatable="false">
         <item>com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity</item>
         <item>com.google.android.youtube/com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity</item>
         <item>com.google.android.youtube/com.google.android.apps.youtube.app.watchwhile.MainActivity</item>
-        <item>com.netflix.mediaclient/com.netflix.mediaclient.ui.player.PlayerActivity</item>
+        <item>com.netflix.mediaclient</item>
         <item>com.amazon.avod.thirdpartyclient/com.amazon.avod.thirdpartyclient.ThirdPartyPlaybackActivity</item>
         <item>in.startv.hotstar/in.startv.hotstar.rocky.watchpage.HSWatchPageActivity</item>
         <item>in.startv.hotstaronly/in.startv.hotstar.rocky.detailpage.HSDetailPageActivity</item>
