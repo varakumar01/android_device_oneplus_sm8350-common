@@ -23,6 +23,9 @@
     <string name="iris_title">Display</string>
     <string name="iris_memc_title">Motion smoothing</string>
     <string name="iris_memc_summary">Add frames to video in supported player apps so motion looks smoother. Uses more battery; off in battery saver</string>
+    <string name="iris_memc_toast_title">Show when motion smoothing starts</string>
+    <string name="iris_memc_toast_summary">Show a short message when the display starts adding frames to a video</string>
+    <string name="iris_memc_started">Motion smoothing started</string>
 
     <!-- Video enhancement (OPLUS decoder filter) -->
     <string name="video_title">Video enhancement</string>
